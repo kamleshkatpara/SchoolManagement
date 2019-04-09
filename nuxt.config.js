@@ -23,11 +23,14 @@ export default {
       }
     ]
   },
-
+  env: {
+    apiURL: 'http://localhost:3000/api',
+    baseUrl: 'http://localhost:7000'
+  },
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#ff3333' },
 
   /*
    ** Global CSS
