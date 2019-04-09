@@ -72,8 +72,8 @@ export default {
         },
         {
           icon: 'assignment',
-          title: 'Assignments',
-          to: '/assignments'
+          title: 'Assessments',
+          to: '/assessments'
         },
         {
           icon: 'face',

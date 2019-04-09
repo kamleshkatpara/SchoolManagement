@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar flat color="white">
-      <v-toolbar-title>Students</v-toolbar-title>
+      <v-toolbar-title>Assessments</v-toolbar-title>
       <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
 
@@ -13,59 +13,25 @@
           <v-form novalidate="novalidate" class="form" @submit.prevent="save">
             <v-card-text>
               <v-card-title>
-                <span class="headline">Add Student</span>
+                <span class="headline">Add Assessment</span>
               </v-card-title>
               <v-container>
                 <v-layout wrap>
                   <v-flex xs12 sm12 md12>
-                    <v-text-field
-                      :error-messages="batchNoErrors"
-                      name="batch_no"
-                      color="orange"
-                      browser-autocomplete="off"
-                      v-model="batch_no"
-                      placeholder="Batch Number"
-                    ></v-text-field>
 
                     <v-text-field
-                      :error-messages="rollNoErrors"
-                      name="role_no"
+                      :error-messages="assessmentNameErrors"
+                      name="assessmentname"
                       color="orange"
                       browser-autocomplete="off"
-                      v-model="role_no"
-                      placeholder="Roll Number"
+                      v-model="assessmentname"
+                      placeholder="Assessment Name"
                     ></v-text-field>
 
-                    <v-menu
-                      ref="menu1"
-                      v-model="menu1"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="dateFormatted"
-                          label="Date"
-                          hint="MM/DD/YYYY format"
-                          persistent-hint
-                          prepend-icon="event"
-                          @blur="date = parseDate(dateFormatted)"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
-                    </v-menu>
-
-                    <!-- <v-select :items="assessmentTypes" v-model="assessmenttype"
+                    <v-select :items="assessmentTypes" v-model="assessmenttype"
                     :error-messages="assessmentTypeErrors" placeholder="Select Type" 
                     name="assessmenttype"
-                    ></v-select>-->
+                    ></v-select>
 
                     <v-text-field
                       :error-messages="totalScoreErrors"
@@ -83,6 +49,7 @@
                       v-model="parent_assessment_id"
                       placeholder="Parent Assessment ID"
                     ></v-text-field>
+
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -104,7 +71,7 @@
         </v-card>
       </v-dialog>
 
-      <!-- <v-dialog v-model="editDialog" max-width="500px">
+      <v-dialog v-model="editDialog" max-width="500px">
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="update">
             <v-card-text>
@@ -163,10 +130,11 @@
             </v-card-text>
           </v-form>
         </v-card>
-      </v-dialog>-->
+      </v-dialog>
+      
     </v-toolbar>
 
-    <!-- <v-data-table :headers="headers" :items="assessments" class="elevation-1">
+    <v-data-table :headers="headers" :items="assessments" class="elevation-1">
       <template v-slot:items="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.type }}</td>
@@ -179,20 +147,14 @@
           <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
         </td>
       </template>
-    </v-data-table>-->
+    </v-data-table>
   </div>
 </template>
 
 
 <script>
 import { validationMixin } from 'vuelidate'
-import {
-  required,
-  minLength,
-  minValue,
-  numeric,
-  helpers
-} from 'vuelidate/lib/validators'
+import { required, minLength, minValue, numeric, helpers } from 'vuelidate/lib/validators'
 
 export default {
   mixins: [validationMixin],
@@ -218,36 +180,16 @@ export default {
       name: process.static ? 'static' : process.server ? 'server' : 'client'
     }
   },
-  data: vm => ({
+  data: () => ({
     addDialog: false,
     editDialog: false,
     loader: null,
     loading: false,
-    date: new Date().toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    menu1: false,
-    menu2: false,
-    batch_no: '',
-    role_no: '',
-    date_of_joining: '',
-    genders: ['Male', 'Female'],
-    gender: '',
-    medium: '',
-    father_name: '',
-    father_occupation: '',
-    father_phone_occupation: '',
-    mother_name: '',
-    mother_occupation: '',
-    mother_phone_occupation: '',
-    address: '',
-    locality: '',
-    area: '',
-    city: '',
-    no_of_siblings: '',
-    shoe_size: '',
-    shirt_size: '',
-    statuses: ['active', 'inactive'],
-    status: '',
+    assessmentname: '',
+    assessmentTypes: ["baseline","midline","endline"],
+    assessmenttype: '',
+    total_score: '',
+    parent_assessment_id: '',
     headers: [
       { text: 'Name', value: 'name' },
       { text: 'Type', value: 'type' },
@@ -281,8 +223,10 @@ export default {
       if (!this.$v.total_score.$dirty) return errors
       !this.$v.total_score.numeric &&
         errors.push('Score needs to be in numbers')
-      !this.$v.total_score.required && errors.push('Please enter total score')
-      !this.$v.total_score.minValue && errors.push('It should be minimum 10')
+      !this.$v.total_score.required &&
+        errors.push('Please enter total score')
+      !this.$v.total_score.minValue &&
+        errors.push('It should be minimum 10')
       return errors
     },
     assessments() {
@@ -293,24 +237,10 @@ export default {
     }
   },
   methods: {
-    formatDate(date) {
-      if (!date) return null
-
-      const [year, month, day] = date.split('-')
-      return `${month}/${day}/${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
     save() {
-      if (
-        !this.$v.assessmentname.$invalid &&
+      if (!this.$v.assessmentname.$invalid &&
         !this.$v.assessmenttype.$invalid &&
-        !this.$v.total_score.$invalid
-      ) {
+        !this.$v.total_score.$invalid) {
         this.$store.dispatch('addAssessment', {
           name: this.assessmentname,
           type: this.assessmenttype,
@@ -321,19 +251,16 @@ export default {
         this.addDialog = false
 
         this.assessmentname = ''
-        ;(this.assessmenttype = ''),
-          (this.total_score = ''),
-          (this.parent_assessment_id = '')
+        this.assessmenttype = '',
+        this.total_score = '',
+        this.parent_assessment_id = ''
 
         setTimeout(() => {
           this.$store.dispatch('getAssessments')
         }, 700)
-      } else if (
-        (this.$v.assessmentname.$invalid &&
-          this.$v.assessmenttype.$invalid &&
-          this.$v.total_score.$invalid,
-        (this.addDialog = true))
-      ) {
+      } else if ((this.$v.assessmentname.$invalid && 
+      this.$v.assessmenttype.$invalid && this.$v.total_score.$invalid
+      , (this.addDialog = true))) {
         this.$v.$touch()
       }
     },

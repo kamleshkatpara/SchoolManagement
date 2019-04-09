@@ -8,7 +8,7 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: pkg.name,
+    title: pkg.description,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -30,7 +30,7 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#ff3333' },
+  loading: { color: '#00c58e' },
 
   /*
    ** Global CSS
@@ -47,8 +47,7 @@ export default {
    */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    '@nuxtjs/axios'
   ],
   /*
    ** Axios module configuration
