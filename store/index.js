@@ -3,11 +3,14 @@ export const strict = false
 export const state = () => ({
     assessments: [],
     assessment: {},
+    assessmentnames: [],
     schools: [],
     school: {},
     students: [],
     student: {},
+    studentnames: [],
     volunteers: [],
+    volunteernames: [],
     volunteer: {},
     student_assessments: [],
     student_assessment: {},
@@ -21,12 +24,15 @@ export const state = () => ({
 export const getters = {
     assessments: state => state.assessments,
     assessment: state => state.assessment,
+    assessmentnames: state => state.assessmentnames,
     schools: state => state.schools,
     school: state => state.school,
     students: state => state.students,
     student: state => state.student,
+    studentnames: state => state.studentnames,
     volunteers: state => state.volunteers,
     volunteer: state => state.volunteer,
+    volunteernames: state => state.volunteernames,
     student_assessments: state => state.student_assessments,
     student_assessment: state => state.student_assessment,
     authTokenId: state => state.authTokenId,
@@ -45,6 +51,10 @@ export const mutations = {
         state.assessment = assessment
     },
 
+    setAssessmentNames: (state, assessmentnames) => {
+        state.assessmentnames = assessmentnames
+    },
+
     setSchools: (state, schools) => {
         state.schools = schools
     },
@@ -61,12 +71,20 @@ export const mutations = {
         state.student = student
     },
 
+    setStudentNames: (state, studentnames) => {
+        state.studentnames = studentnames
+    },
+
     setVolunteers: (state, volunteers) => {
         state.volunteers = volunteers
     },
 
     setVolunteer: (state, volunteer) => {
         state.volunteer = volunteer
+    },
+
+    setVolunteerNames: (state, volunteernames) => {
+        state.volunteernames = volunteernames
     },
 
     setStudentAssessments: (state, student_assessments) => {
@@ -242,6 +260,11 @@ export const actions = {
         commit('setStudent', data)
     },
 
+    async getStudentNames({ commit }) {
+        const data = await this.$axios.$get(`${process.env.apiURL}/Students?filter[fields][id]=true&filter[fields][name]=true`)
+        commit('setStudentNames', data)
+    },
+
     async updateStudent({ commit }, { id, name, type, total_score, parent_Student_id, updated_at }) {
         const data = await this.$axios.$put(`${process.env.apiURL}/Students/${id}`, {
             name, type, total_score, parent_Student_id, updated_at
@@ -275,6 +298,11 @@ export const actions = {
         commit('setAssessment', data)
     },
 
+    async getAssessmentNames({ commit }) {
+        const data = await this.$axios.$get(`${process.env.apiURL}/Assessments?filter[fields][id]=true&filter[fields][name]=true&filter[fields][total_score]=true`)
+        commit('setAssessmentNames', data)
+    },
+
     async updateAssessment({ commit }, { id, name, type, total_score, parent_assessment_id, updated_at }) {
         const data = await this.$axios.$put(`${process.env.apiURL}/Assessments/${id}`, {
             name, type, total_score, parent_assessment_id, updated_at
@@ -306,6 +334,11 @@ export const actions = {
     async getVolunteer({ commit }, { id }) {
         const data = await this.$axios.$get(`${process.env.apiURL}/Volunteers/${id}`)
         commit('setVolunteer', data)
+    },
+
+    async getVolunteerNames({ commit }) {
+        const data = await this.$axios.$get(`${process.env.apiURL}/Volunteers?filter[fields][id]=true&filter[fields][name]=true`)
+        commit('setVolunteerNames', data)
     },
 
     async updateVolunteer({ commit }, { id, name, updated_at }) {
