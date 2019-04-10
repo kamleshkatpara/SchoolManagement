@@ -367,19 +367,19 @@ export const actions = {
     
         async getStudentAssessments({ commit }) {
             const data = await this.$axios.$get(`${process.env.apiURL}/StudentAssessments`)
-            commit('setAssessments', data)
+            commit('setStudentAssessments', data)
         },
     
         async getStudentAssessment({ commit }, { id }) {
             const data = await this.$axios.$get(`${process.env.apiURL}/StudentAssessments/${id}`)
-            commit('setAssessment', data)
+            commit('setStudentAssessment', data)
         },
     
         async updateStudentAssessment({ commit }, { id, student_id, assessment_id, volunteer_id, score, assessment_date, updated_at }) {
             const data = await this.$axios.$put(`${process.env.apiURL}/StudentAssessments/${id}`, {
                 student_id, assessment_id, volunteer_id, score, assessment_date, updated_at
             })
-            commit('setAssessment', data)
+            commit('setStudentAssessment', data)
         },
     
         async removeStudentAssessment({ commit }, { id }) {

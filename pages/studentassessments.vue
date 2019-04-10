@@ -10,7 +10,7 @@
           <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
         </template>
         <v-card>
-          <v-form novalidate="novalidate" class="form" @submit.prevent="send">
+          <v-form novalidate="novalidate" class="form" @submit.prevent="save">
             <v-card-text>
               <v-card-title>
                 <span class="headline">Add Student Assessment</span>
@@ -90,7 +90,7 @@
                             v-model="assessmentdate"
                             :max="new Date().toISOString().substr(0, 10)"
                             min="1950-01-01"
-                            @change="save"
+                            @change="savedate"
                           ></v-date-picker>
                         </v-menu>
                       </v-flex>
@@ -116,6 +116,24 @@
         </v-card>
       </v-dialog>
     </v-toolbar>
+
+    <v-data-table :headers="headers" :items="studentassessments" class="elevation-1">
+      <template v-slot:items="props">
+        <td>{{ props.item.student_id }}</td>
+        <td>{{ props.item.assessment_id }}</td>
+        <td>{{ props.item.volunteer_id }}</td>
+        <td>{{ props.item.score }}</td>
+        <td>{{ props.item.assessment_date | moment("DD / MM / YYYY") }}</td>
+        <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
+        <td v-if="props.item.updated_at == null"></td>
+        <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
+        <td class="justify-center layout px-0">
+          <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
+          <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
+        </td>
+      </template>
+    </v-data-table>
+
     <v-snackbar v-model="snackbar" :color="color" :timeout="timeout" top>
       {{ this.status
       }}
@@ -148,6 +166,14 @@ export default {
       required
     }
   },
+  async fetch({ store }) {
+    await store.dispatch('getStudentAssessments')
+  },
+  asyncData() {
+    return {
+      name: process.static ? 'static' : process.server ? 'server' : 'client'
+    }
+  },
   data: () => ({
     snackbar: false,
     status: '',
@@ -165,7 +191,17 @@ export default {
     addDialog: false,
     editDialog: false,
     loader: null,
-    loading: false
+    loading: false,
+    headers: [
+      { text: 'Student Name', value: 'student_id' },
+      { text: 'Assessment', value: 'assessment_id' },
+      { text: 'Volunteer Name', value: 'volunteer_id' },
+      { text: 'Score', value: 'score' },
+      { text: 'Assessment Date', value: 'assessment_date' },
+      { text: 'Created', value: 'created_at' },
+      { text: 'Updated', value: 'updated_at' },
+      { text: 'Actions', align: 'center', value: 'id', sortable: false }
+    ]
   }),
   computed: {
     studentErrors() {
@@ -225,10 +261,13 @@ export default {
     },
     volnames() {
       return this.$store.state.volunteernames
+    },
+    studentassessments() {
+      return this.$store.state.student_assessments
     }
   },
   methods: {
-    send() {
+    save() {
       if (
         !this.$v.student.$invalid &&
         !this.$v.assessment.$invalid &&
@@ -264,7 +303,19 @@ export default {
         this.$v.$touch()
       }
     },
-    save(assessmentdate) {
+    editItem(item) {
+      console.log(item);
+    },
+    deleteItem(item) {
+      confirm('Are you sure you want to delete this item?') &&
+        this.$store.dispatch('removeStudentAssessment', {
+          id: item
+        })
+      setTimeout(() => {
+        this.$store.dispatch('getStudentAssessments')
+      }, 700)
+    },
+    savedate(assessmentdate) {
       this.$refs.menu.save(assessmentdate)
     }
   },
