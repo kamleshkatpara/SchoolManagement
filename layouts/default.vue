@@ -89,6 +89,11 @@ export default {
           icon: 'assignment_ind',
           title: 'Student Assessments',
           to: '/studentassessments'
+        },
+        {
+          icon: 'assignment_ind',
+          title: 'Sub Assessments',
+          to: '/subassessments'
         }
       ],
       miniVariant: false,
