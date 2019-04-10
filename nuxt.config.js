@@ -1,5 +1,7 @@
 import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
 import pkg from './package'
+const bodyParser = require('body-parser')
+const session = require('express-session')
 
 export default {
   mode: 'universal',
@@ -81,5 +83,20 @@ export default {
         })
       }
     }
-  }
+  },
+  serverMiddleware: [
+      // body-parser middleware
+      bodyParser.json(),
+      // session middleware
+      session({
+          secret: 'SMEncryption',
+          resave: false,
+          saveUninitialized: false,
+          cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 },
+          //: { secure: true }
+      }),
+      // Api middleware
+      // We add /api/login & /api/logout routes
+      '~/api'
+  ]
 }
