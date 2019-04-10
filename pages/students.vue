@@ -5,7 +5,7 @@
       <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
 
-      <v-dialog lazy origin persistent v-model="addDialog" max-width="500px">
+      <v-dialog lazy origin persistent v-model="addDialog" max-width="700px">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
         </template>
@@ -15,30 +15,47 @@
               <v-card-title>
                 <span class="headline">Add Student</span>
               </v-card-title>
-              <v-container>
+              <v-container grid-list-md>
                 <v-layout wrap>
-                  <v-flex xs12 sm12 md12>
+                  
+                  <v-flex xs12 sm6 md4>
                     <v-text-field
-                      :error-messages="batchNoErrors"
+                      name="student_name"
+                      :error-messages="studentNameErrors"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student_name"
+                      placeholder="Student Name"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
                       name="batch_no"
+                      :error-messages="batchNoErrors"
                       color="orange"
                       browser-autocomplete="off"
                       v-model="batch_no"
                       placeholder="Batch Number"
                     ></v-text-field>
+                  </v-flex>
 
+                  <v-flex xs12 sm6 md4>
                     <v-text-field
-                      :error-messages="rollNoErrors"
                       name="role_no"
+                      :error-messages="roleNoErrors"
                       color="orange"
                       browser-autocomplete="off"
                       v-model="role_no"
                       placeholder="Roll Number"
                     ></v-text-field>
+                  </v-flex>
 
+                  <v-flex xs12 sm6 md4>
                     <v-menu
                       ref="menu1"
                       v-model="menu1"
+                      :error-messages="dojErrors"
                       :close-on-content-click="false"
                       :nudge-right="40"
                       lazy
@@ -50,40 +67,180 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="dateFormatted"
+                          v-model="date_of_joining"
                           label="Date"
                           hint="MM/DD/YYYY format"
                           persistent-hint
                           prepend-icon="event"
-                          @blur="date = parseDate(dateFormatted)"
+                          @blur="date = parseDate(date_of_joining)"
                           v-on="on"
                         ></v-text-field>
                       </template>
                       <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
                     </v-menu>
+                  </v-flex>
 
-                    <!-- <v-select :items="assessmentTypes" v-model="assessmenttype"
-                    :error-messages="assessmentTypeErrors" placeholder="Select Type" 
-                    name="assessmenttype"
-                    ></v-select>-->
+                  <v-flex xs12 sm6 md4>
+                    <v-select :items="genders" v-model="gender"
+                    placeholder="Select Gender" name="gender"
+                    :error-messages="genderErrors"
+                    ></v-select>
+                  </v-flex>
 
+                  <v-flex xs12 sm6 md4>
                     <v-text-field
-                      :error-messages="totalScoreErrors"
-                      name="totalscore"
+                      name="medium"
                       color="orange"
                       browser-autocomplete="off"
-                      v-model="total_score"
-                      placeholder="Total Score"
-                    ></v-text-field>
-
-                    <v-text-field
-                      name="parent_assessment_id"
-                      color="orange"
-                      browser-autocomplete="off"
-                      v-model="parent_assessment_id"
-                      placeholder="Parent Assessment ID"
+                      v-model="medium"
+                      :error-messages="mediumErrors"
+                      placeholder="Medium"
                     ></v-text-field>
                   </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="father_name"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="father_name"
+                      :error-messages="fatherNameErrors"
+                      placeholder="Father's Name"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="father_occupation"
+                      color="orange"
+                      :error-messages="fatherOccupationErrors"
+                      browser-autocomplete="off"
+                      v-model="father_occupation"
+                      placeholder="Father's Occupation"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="father_phone_number"
+                      color="orange"
+                      :error-messages="fatherPhoneNumberErrors"
+                      browser-autocomplete="off"
+                      v-model="father_phone_number"
+                      placeholder="Father's Phone Number"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="mother_name"
+                      color="orange"
+                      :error-messages="motherNameErrors"
+                      browser-autocomplete="off"
+                      v-model="mother_name"
+                      placeholder="Mother's Name"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="mother_occupation"
+                      color="orange"
+                      :error-messages="motherOccupationErrors"
+                      browser-autocomplete="off"
+                      v-model="mother_occupation"
+                      placeholder="Mother's Occupation"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="mother_phone_number"
+                      color="orange"
+                      :error-messages="motherPhoneNumberErrors"
+                      browser-autocomplete="off"
+                      v-model="mother_phone_number"
+                      placeholder="Mother's Phone Number"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm12 md12>
+                     <v-textarea
+                        name="student_address"
+                        placeholder="Address"
+                        color="orange"
+                        :error-messages="studentAddressErrors"
+                        browser-autocomplete="off"
+                        v-model="student_address"
+                      ></v-textarea>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_locality"
+                      color="orange"
+                      browser-autocomplete="off"
+                      :error-messages="studentLocalityErrors"
+                      v-model="student_locality"
+                      placeholder="Locality"
+                    ></v-text-field>
+                  </v-flex>
+                  
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_area"
+                      color="orange"
+                      :error-messages="studentAreaErrors"
+                      browser-autocomplete="off"
+                      v-model="student_area"
+                      placeholder="Area"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_city"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student_city"
+                      :error-messages="studentCityErrors"
+                      placeholder="City"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="no_of_siblings"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="no_of_siblings"
+                      :error-messages="noOfSiblingsErrors"
+                      placeholder="No. of Siblings"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_shoe_size"
+                      color="orange"
+                      :error-messages="shoeSizeErrors"
+                      browser-autocomplete="off"
+                      v-model="student_shoe_size"
+                      placeholder="Shoe Size"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_shirt_size"
+                      color="orange"
+                      :error-messages="shirtSizeErrors"
+                      browser-autocomplete="off"
+                      v-model="student_shirt_size"
+                      placeholder="Shirt Size"
+                    ></v-text-field>
+                  </v-flex>
+
                 </v-layout>
               </v-container>
 
@@ -104,47 +261,239 @@
         </v-card>
       </v-dialog>
 
-      <!-- <v-dialog v-model="editDialog" max-width="500px">
+      <!-- <v-dialog v-model="editDialog" max-width="700px">
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="update">
             <v-card-text>
               <v-card-title>
-                <span class="headline">Edit Assessment</span>
+                <span class="headline">Edit Student</span>
               </v-card-title>
               <v-container grid-list-md>
                 <v-layout wrap>
-                  <v-flex xs12 sm12 md12>
+                  
+                  <v-flex xs12 sm6 md4>
                     <v-text-field
-                      :error-messages="assessmentNameErrors"
-                      name="assessmentname"
+                      name="student_name"
+                      :error-messages="studentNameErrors"
                       color="orange"
                       browser-autocomplete="off"
-                      v-model="assessment.name"
-                      placeholder="Assessment Name"
-                    ></v-text-field>
-
-                    <v-select :items="assessmentTypes" v-model="assessment.type"
-                    :error-messages="assessmentTypeErrors" placeholder="Select Type" 
-                    name="assessmenttype"
-                    ></v-select>
-
-                    <v-text-field
-                      :error-messages="totalScoreErrors"
-                      name="totalscore"
-                      color="orange"
-                      browser-autocomplete="off"
-                      v-model="assessment.total_score"
-                      placeholder="Total Score"
-                    ></v-text-field>
-
-                    <v-text-field
-                      name="parent_assessment_id"
-                      color="orange"
-                      browser-autocomplete="off"
-                      v-model="assessment.parent_assessment_id"
-                      placeholder="Parent Assessment ID"
+                      v-model="student.name"
+                      placeholder="Student Name"
                     ></v-text-field>
                   </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="batch_no"
+                      :error-messages="batchNoErrors"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student.batch_no"
+                      placeholder="Batch Number"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="role_no"
+                      :error-messages="roleNoErrors"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student.role_no"
+                      placeholder="Roll Number"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-menu
+                      ref="menu1"
+                      v-model="menu1"
+                      :error-messages="dojErrors"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="student.date_of_joining"
+                          label="Date"
+                          hint="MM/DD/YYYY format"
+                          persistent-hint
+                          prepend-icon="event"
+                          @blur="date = parseDate(date_of_joining)"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+                    </v-menu>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-select :items="genders" v-model="student.gender"
+                    placeholder="Select Gender" name="gender"
+                    :error-messages="genderErrors"
+                    ></v-select>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="medium"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student.medium"
+                      :error-messages="mediumErrors"
+                      placeholder="Medium"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="father_name"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student.father_name"
+                      :error-messages="fatherNameErrors"
+                      placeholder="Father's Name"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="father_occupation"
+                      color="orange"
+                      :error-messages="fatherOccupationErrors"
+                      browser-autocomplete="off"
+                      v-model="student.father_occupation"
+                      placeholder="Father's Occupation"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="father_phone_number"
+                      color="orange"
+                      :error-messages="fatherPhoneNumberErrors"
+                      browser-autocomplete="off"
+                      v-model="student.father_phone_number"
+                      placeholder="Father's Phone Number"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="mother_name"
+                      color="orange"
+                      :error-messages="motherNameErrors"
+                      browser-autocomplete="off"
+                      v-model="student.mother_name"
+                      placeholder="Mother's Name"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="mother_occupation"
+                      color="orange"
+                      :error-messages="motherOccupationErrors"
+                      browser-autocomplete="off"
+                      v-model="student.mother_occupation"
+                      placeholder="Mother's Occupation"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="mother_phone_number"
+                      color="orange"
+                      :error-messages="motherPhoneNumberErrors"
+                      browser-autocomplete="off"
+                      v-model="student.mother_phone_number"
+                      placeholder="Mother's Phone Number"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm12 md12>
+                     <v-textarea
+                        name="student_address"
+                        placeholder="Address"
+                        color="orange"
+                        :error-messages="studentAddressErrors"
+                        browser-autocomplete="off"
+                        v-model="student.address"
+                      ></v-textarea>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_locality"
+                      color="orange"
+                      browser-autocomplete="off"
+                      :error-messages="studentLocalityErrors"
+                      v-model="student.locality"
+                      placeholder="Locality"
+                    ></v-text-field>
+                  </v-flex>
+                  
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_area"
+                      color="orange"
+                      :error-messages="studentAreaErrors"
+                      browser-autocomplete="off"
+                      v-model="student.area"
+                      placeholder="Area"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_city"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student.city"
+                      :error-messages="studentCityErrors"
+                      placeholder="City"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="no_of_siblings"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="student.no_of_siblings"
+                      :error-messages="noOfSiblingsErrors"
+                      placeholder="No. of Siblings"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_shoe_size"
+                      color="orange"
+                      :error-messages="shoeSizeErrors"
+                      browser-autocomplete="off"
+                      v-model="student.shoe_size"
+                      placeholder="Shoe Size"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      name="student_shirt_size"
+                      color="orange"
+                      :error-messages="shirtSizeErrors"
+                      browser-autocomplete="off"
+                      v-model="student.shirt_size"
+                      placeholder="Shirt Size"
+                    ></v-text-field>
+                  </v-flex>
+
                 </v-layout>
               </v-container>
 
@@ -163,15 +512,15 @@
             </v-card-text>
           </v-form>
         </v-card>
-      </v-dialog>-->
+      </v-dialog> -->
     </v-toolbar>
 
-    <!-- <v-data-table :headers="headers" :items="assessments" class="elevation-1">
+    <v-data-table :headers="headers" :items="students" class="elevation-1">
       <template v-slot:items="props">
         <td>{{ props.item.name }}</td>
-        <td>{{ props.item.type }}</td>
-        <td>{{ props.item.total_score }}</td>
-        <td>{{ props.item.parent_assessment_id }}</td>
+        <td>{{ props.item.batch_no }}</td>
+        <td>{{ props.item.role_no }}</td>
+        <td>{{ props.item.medium }}</td>
         <td>{{ props.item.created_at }}</td>
         <td>{{ props.item.updated_at }}</td>
         <td class="justify-center layout px-0">
@@ -179,7 +528,7 @@
           <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
         </td>
       </template>
-    </v-data-table>-->
+    </v-data-table>
   </div>
 </template>
 
@@ -191,27 +540,107 @@ import {
   minLength,
   minValue,
   numeric,
+  alpha,
+  alphaNum,
   helpers
 } from 'vuelidate/lib/validators'
 
 export default {
   mixins: [validationMixin],
   validations: {
-    assessmentname: {
+    student_name: {
       required,
+      alpha,
       minLength: minLength(2)
     },
-    assessmenttype: {
+    batch_no: {
+      required,
+      minLength: minLength(1),
+      alphaNum
+    },
+    role_no: {
+      required,
+      minValue: minValue(1),
+      alphaNum
+    },
+    date_of_joining: {
       required
     },
-    total_score: {
+    gender: {
+      required
+    },
+    medium: {
       required,
-      minValue: minValue(10),
-      numeric
+      minLength: minLength(2),
+      alpha
+    },
+    father_name: {
+      required,
+      alpha,
+      minLength: minLength(3)
+    },
+    father_occupation: {
+      required,
+      alpha,
+      minLength: minLength(4)
+    },
+    father_phone_number: {
+      required,
+      numeric,
+      minLength: minLength(10)
+    },
+    mother_name: {
+      required,
+      alpha,
+      minLength: minLength(3)
+    },
+    mother_occupation: {
+      required,
+      alpha,
+      minLength: minLength(4)
+    },
+    mother_phone_number: {
+      required,
+      numeric,
+      minLength: minLength(10)
+    },
+    student_address: {
+      required,
+      minLength: minLength(10)
+    },
+    student_locality: {
+      required,
+      minLength: minLength(3),
+      alpha
+    },
+    student_area: {
+      required,
+      minLength: minLength(3),
+      alpha
+    },
+    student_city: {
+      required,
+      minLength: minLength(3),
+      alpha
+    },
+    no_of_siblings: {
+      required,
+      numeric,
+      minLength: minLength(1)
+    },
+    student_shoe_size: {
+      required,
+      numeric,
+      minLength: minLength(1)
+    },
+    student_shirt_size: {
+      required,
+      numeric,
+      minLength: minLength(1)
     }
   },
   async fetch({ store }) {
-    await store.dispatch('getAssessments')
+    await store.dispatch('getStudents')
   },
   asyncData() {
     return {
@@ -224,35 +653,35 @@ export default {
     loader: null,
     loading: false,
     date: new Date().toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+    date_of_joining: vm.formatDate(new Date().toISOString().substr(0, 10)),
     menu1: false,
     menu2: false,
+    student_name: '',
     batch_no: '',
     role_no: '',
-    date_of_joining: '',
     genders: ['Male', 'Female'],
     gender: '',
     medium: '',
     father_name: '',
     father_occupation: '',
-    father_phone_occupation: '',
+    father_phone_number: '',
     mother_name: '',
     mother_occupation: '',
-    mother_phone_occupation: '',
-    address: '',
-    locality: '',
-    area: '',
-    city: '',
+    mother_phone_number: '',
+    student_address: '',
+    student_locality: '',
+    student_area: '',
+    student_city: '',
     no_of_siblings: '',
-    shoe_size: '',
-    shirt_size: '',
+    student_shoe_size: '',
+    student_shirt_size: '',
     statuses: ['active', 'inactive'],
     status: '',
     headers: [
       { text: 'Name', value: 'name' },
-      { text: 'Type', value: 'type' },
-      { text: 'Score', value: 'total_score' },
-      { text: 'ParentID', value: 'parent_assessment_id' },
+      { text: 'Batch#', value: 'batch_no' },
+      { text: 'Role#', value: 'role_no' },
+      { text: 'Medium', value: 'medium' },
       { text: 'Created', value: 'created_at' },
       { text: 'Updated', value: 'updated_at' },
       { text: 'Actions', align: 'center', value: 'id', sortable: false }
@@ -260,36 +689,218 @@ export default {
   }),
 
   computed: {
-    assessmentNameErrors() {
+    computedDateFormatted () {
+        return this.formatDate(this.date)
+    },
+    studentNameErrors() {
       const errors = []
-      if (!this.$v.assessmentname.$dirty) return errors
-      !this.$v.assessmentname.minLength &&
+      if (!this.$v.student_name.$dirty) return errors
+      !this.$v.student_name.minLength &&
         errors.push('Name seems to be very short')
-      !this.$v.assessmentname.required &&
-        errors.push('Please enter assessment name')
+      !this.$v.student_name.required &&
+        errors.push('Please enter student name')
+      !this.$v.student_name.alpha &&
+        errors.push('Only alphabets allowed !')
       return errors
     },
-    assessmentTypeErrors() {
+    batchNoErrors() {
       const errors = []
-      if (!this.$v.assessmenttype.$dirty) return errors
-      !this.$v.assessmenttype.required &&
-        errors.push('Please select assessment type')
+      if (!this.$v.batch_no.$dirty) return errors
+      !this.$v.batch_no.minLength &&
+        errors.push('Batch Number seems to be very short')
+      !this.$v.batch_no.alphaNum &&
+        errors.push('No special characters allowed !')
+      !this.$v.batch_no.required &&
+        errors.push('Please enter batch number')
       return errors
     },
-    totalScoreErrors() {
+    roleNoErrors() {
       const errors = []
-      if (!this.$v.total_score.$dirty) return errors
-      !this.$v.total_score.numeric &&
-        errors.push('Score needs to be in numbers')
-      !this.$v.total_score.required && errors.push('Please enter total score')
-      !this.$v.total_score.minValue && errors.push('It should be minimum 10')
+      if (!this.$v.role_no.$dirty) return errors
+      !this.$v.role_no.minLength &&
+        errors.push('Role Number seems to be very short')
+      !this.$v.role_no.required &&
+        errors.push('Please enter role number')
+      !this.$v.role_no.alphaNum &&
+        errors.push('No special characters allowed !')
       return errors
     },
-    assessments() {
-      return this.$store.state.assessments
+    dojErrors() {
+      const errors = []
+      if (!this.$v.date_of_joining.$dirty) return errors
+      !this.$v.date_of_joining.required &&
+        errors.push('Please enter date of joining')
+      return errors
     },
-    assessment() {
-      return this.$store.state.assessment
+    genderErrors() {
+      const errors = []
+      if (!this.$v.gender.$dirty) return errors
+      !this.$v.gender.required &&
+        errors.push('Please enter role number')
+      return errors
+    },
+    mediumErrors() {
+      const errors = []
+      if (!this.$v.medium.$dirty) return errors
+      !this.$v.medium.minLength &&
+        errors.push('Medium seems to be very short')
+      !this.$v.medium.required &&
+        errors.push('Please enter medium')
+      !this.$v.medium.alpha &&
+        errors.push('No special characters allowed !')
+      return errors
+    },
+    fatherNameErrors() {
+      const errors = []
+      if (!this.$v.father_name.$dirty) return errors
+      !this.$v.father_name.minLength &&
+        errors.push('Father Name seems to be very short')
+      !this.$v.father_name.required &&
+        errors.push('Please enter father name')
+      !this.$v.father_name.alpha &&
+        errors.push('Only alphabets allowed !')
+      return errors
+    },
+    fatherOccupationErrors() {
+      const errors = []
+      if (!this.$v.father_occupation.$dirty) return errors
+      !this.$v.father_occupation.minLength &&
+        errors.push('Father occupation seems to be very short')
+      !this.$v.father_occupation.required &&
+        errors.push('Please enter father occupation')
+      !this.$v.father_occupation.alpha &&
+        errors.push('Only alphabets allowed !')
+      return errors
+    },
+    fatherPhoneNumberErrors() {
+      const errors = []
+      if (!this.$v.father_phone_number.$dirty) return errors
+      !this.$v.father_phone_number.minLength &&
+        errors.push('Father phone number seems to be very short')
+      !this.$v.father_phone_number.required &&
+        errors.push('Please enter Father Phone Number')
+      !this.$v.father_phone_number.numeric &&
+        errors.push('Father phone number needs to be numeric')
+      return errors
+    },
+    motherNameErrors() {
+      const errors = []
+      if (!this.$v.mother_name.$dirty) return errors
+      !this.$v.mother_name.minLength &&
+        errors.push('Mother Name seems to be very short')
+      !this.$v.mother_name.required &&
+        errors.push('Please enter mother name')
+      !this.$v.mother_name.alpha &&
+        errors.push('Only alphabets allowed !')
+      return errors
+    },
+    motherOccupationErrors() {
+      const errors = []
+      if (!this.$v.father_occupation.$dirty) return errors
+      !this.$v.mother_occupation.minLength &&
+        errors.push('Mother occupation seems to be very short')
+      !this.$v.mother_occupation.required &&
+        errors.push('Please enter mother occupation')
+      !this.$v.mother_occupation.alpha &&
+        errors.push('Only alphabets allowed !')
+      return errors
+    },
+    motherPhoneNumberErrors() {
+      const errors = []
+      if (!this.$v.mother_phone_number.$dirty) return errors
+      !this.$v.mother_phone_number.minLength &&
+        errors.push('Mother phone number seems to be very short')
+      !this.$v.mother_phone_number.required &&
+        errors.push('Please enter Mother Phone Number')
+      !this.$v.mother_phone_number.numeric &&
+        errors.push('Mother phone number needs to be numeric')
+      return errors
+    },
+    studentAddressErrors() {
+      const errors = []
+      if (!this.$v.student_address.$dirty) return errors
+      !this.$v.student_address.minLength &&
+        errors.push('Student Address seems to be very short')
+      !this.$v.student_address.required &&
+        errors.push('Please enter student address')
+      return errors
+    },
+    studentLocalityErrors() {
+      const errors = []
+      if (!this.$v.student_locality.$dirty) return errors
+      !this.$v.student_locality.minLength &&
+        errors.push('Student Locality seems to be very short')
+      !this.$v.student_locality.required &&
+        errors.push('Please enter student locality')
+      !this.$v.student_locality.alpha &&
+        errors.push('Only alphabets allowed !')
+      return errors
+    },
+    studentAreaErrors() {
+      const errors = []
+      if (!this.$v.student_area.$dirty) return errors
+      !this.$v.student_area.minLength &&
+        errors.push('Student area seems to be very short')
+      !this.$v.student_area.required &&
+        errors.push('Please enter student area')
+      !this.$v.student_area.alpha &&
+        errors.push('Only alphabets allowed !')
+      return errors
+    },
+    studentCityErrors() {
+      const errors = []
+      if (!this.$v.student_city.$dirty) return errors
+      !this.$v.student_city.minLength &&
+        errors.push('Student City seems to be very short')
+      !this.$v.student_city.required &&
+        errors.push('Please enter student city')
+      !this.$v.student_city.alpha &&
+        errors.push('Only alphabets allowed !')
+      return errors
+    },
+    noOfSiblingsErrors() {
+      const errors = []
+      if (!this.$v.no_of_siblings.$dirty) return errors
+      !this.$v.no_of_siblings.minLength &&
+        errors.push('No of siblings seems to be very short')
+      !this.$v.no_of_siblings.required &&
+        errors.push('Please enter no. of siblings')
+      !this.$v.no_of_siblings.numeric &&
+        errors.push('No. of siblings needs to be numeric')
+      return errors
+    },
+    shoeSizeErrors() {
+      const errors = []
+      if (!this.$v.student_shoe_size.$dirty) return errors
+      !this.$v.student_shoe_size.minLength &&
+        errors.push('Shoe size seems to be very short')
+      !this.$v.student_shoe_size.required &&
+        errors.push('Please enter shoe size')
+      !this.$v.student_shoe_size.numeric &&
+        errors.push('Shoe size needs to be numeric')
+      return errors
+    },
+    shirtSizeErrors() {
+      const errors = []
+      if (!this.$v.student_shirt_size.$dirty) return errors
+      !this.$v.student_shirt_size.minLength &&
+        errors.push('Shirt size seems to be very short')
+      !this.$v.student_shirt_size.required &&
+        errors.push('Please enter shirt size')
+      !this.$v.student_shirt_size.numeric &&
+        errors.push('Shirt Size needs to be numeric')
+      return errors
+    },
+    students() {
+      return this.$store.state.students
+    },
+    student() {
+      return this.$store.state.student
+    }
+  },
+  watch: {
+    date (val) {
+      this.date_of_joining = this.formatDate(this.date)
     }
   },
   methods: {
@@ -297,7 +908,7 @@ export default {
       if (!date) return null
 
       const [year, month, day] = date.split('-')
-      return `${month}/${day}/${year}`
+      return `${day}/${month}/${year}`
     },
     parseDate(date) {
       if (!date) return null
@@ -306,40 +917,85 @@ export default {
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     save() {
-      if (
-        !this.$v.assessmentname.$invalid &&
-        !this.$v.assessmenttype.$invalid &&
-        !this.$v.total_score.$invalid
-      ) {
-        this.$store.dispatch('addAssessment', {
-          name: this.assessmentname,
-          type: this.assessmenttype,
-          total_score: this.total_score,
-          parent_assessment_id: this.parent_assessment_id
-        })
 
-        this.addDialog = false
+      if (!this.$v.student_name.$invalid &&
+          !this.$v.batch_no.$invalid &&
+          !this.$v.role_no.$invalid &&
+          !this.$v.date_of_joining.$invalid &&
+          !this.$v.gender.$invalid &&
+          !this.$v.medium.$invalid &&
+          !this.$v.father_name.$invalid &&
+          !this.$v.father_occupation.$invalid &&
+          !this.$v.father_phone_number.$invalid &&
+          !this.$v.mother_name.$invalid &&
+          !this.$v.mother_occupation.$invalid &&
+          !this.$v.mother_phone_number.$invalid &&
+          !this.$v.student_address.$invalid &&
+          !this.$v.student_locality.$invalid &&
+          !this.$v.student_area.$invalid &&
+          !this.$v.student_city.$invalid &&
+          !this.$v.no_of_siblings.$invalid &&
+          !this.$v.student_shoe_size.$invalid &&
+          !this.$v.student_shirt_size.$invalid) {
 
-        this.assessmentname = ''
-        ;(this.assessmenttype = ''),
-          (this.total_score = ''),
-          (this.parent_assessment_id = '')
+          this.$store.dispatch('addStudent', {
+            name: this.student_name,
+            batch_no: this.batch_no,
+            role_no: this.role_no,
+            date_of_joining: this.date_of_joining,
+            gender: this.gender,
+            medium: this.medium,
+            father_name: this.father_name,
+            father_occupation: this.father_occupation,
+            father_phone_number: this.father_phone_number,
+            mother_name: this.mother_name,
+            mother_occupation: this.mother_occupation,
+            mother_phone_number: this.mother_phone_number,
+            address: this.student_address,
+            locality: this.student_locality,
+            area: this.student_area,
+            city: this.student_city,
+            no_of_siblings: this.no_of_siblings,
+            shoe_size: this.student_shoe_size,
+            shirt_size: this.student_shirt_size,
+            status: 'active'
+          })
 
-        setTimeout(() => {
-          this.$store.dispatch('getAssessments')
-        }, 700)
+          this.addDialog = false
+
+          setTimeout(() => {
+            this.$store.dispatch('getStudents')
+          }, 700);
+
       } else if (
-        (this.$v.assessmentname.$invalid &&
-          this.$v.assessmenttype.$invalid &&
-          this.$v.total_score.$invalid,
-        (this.addDialog = true))
-      ) {
+          this.$v.student_name.$invalid &&
+          this.$v.batch_no.$invalid &&
+          this.$v.role_no.$invalid &&
+          this.$v.date_of_joining.$invalid &&
+          this.$v.gender.$invalid &&
+          this.$v.medium.$invalid &&
+          this.$v.father_name.$invalid &&
+          this.$v.father_occupation.$invalid &&
+          this.$v.father_phone_number.$invalid &&
+          this.$v.mother_name.$invalid &&
+          this.$v.mother_occupation.$invalid &&
+          this.$v.mother_phone_number.$invalid &&
+          this.$v.student_address.$invalid &&
+          this.$v.student_locality.$invalid &&
+          this.$v.student_area.$invalid &&
+          this.$v.student_city.$invalid &&
+          this.$v.no_of_siblings.$invalid &&
+          this.$v.student_shoe_size.$invalid &&
+          this.$v.student_shirt_size.$invalid
+      )
+        this.addDialog = true
+      {
         this.$v.$touch()
       }
     },
 
     editItem(item) {
-      this.$store.dispatch('getAssessment', {
+      this.$store.dispatch('getStudent', {
         id: item
       })
       this.editDialog = true
@@ -359,29 +1015,29 @@ export default {
       }
       var today = dd + '-' + mm + '-' + yyyy
 
-      this.$store.dispatch('updateAssessment', {
-        id: this.assessment.id,
-        name: this.assessment.name,
-        type: this.assessment.type,
-        total_score: this.assessment.total_score,
-        parent_assessment_id: this.assessment.parent_assessment_id,
+      this.$store.dispatch('updateStudent', {
+        id: this.Student.id,
+        name: this.Student.name,
+        type: this.Student.type,
+        total_score: this.Student.total_score,
+        parent_Student_id: this.Student.parent_Student_id,
         updated_at: today
       })
 
       this.editDialog = false
 
       setTimeout(() => {
-        this.$store.dispatch('getAssessments')
+        this.$store.dispatch('getStudents')
       }, 700)
     },
 
     deleteItem(item) {
       confirm('Are you sure you want to delete this item?') &&
-        this.$store.dispatch('removeAssessment', {
+        this.$store.dispatch('removeStudent', {
           id: item
         })
       setTimeout(() => {
-        this.$store.dispatch('getAssessments')
+        this.$store.dispatch('getStudents')
       }, 700)
     }
   }

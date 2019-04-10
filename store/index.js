@@ -135,6 +135,7 @@ export const actions = {
     // Student Operations from here
 
     async addStudent({ commit }, { 
+        name,
         batch_no,
         role_no,
         date_of_joining,
@@ -143,6 +144,9 @@ export const actions = {
         father_name,
         father_occupation,
         father_phone_number,
+        mother_name,
+        mother_occupation,
+        mother_phone_number,
         address,
         locality,
         area,
@@ -153,7 +157,8 @@ export const actions = {
         status
      }) {
         try {
-            const data = await this.$axios.$post(`${process.env.apiURL}/Students`, { 
+            const data = await this.$axios.$post(`${process.env.apiURL}/Students`, {
+                name, 
                 batch_no,
                 role_no,
                 date_of_joining,
@@ -162,6 +167,9 @@ export const actions = {
                 father_name,
                 father_occupation,
                 father_phone_number,
+                mother_name,
+                mother_occupation,
+                mother_phone_number,
                 address,
                 locality,
                 area,
