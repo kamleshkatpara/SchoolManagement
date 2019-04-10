@@ -90,8 +90,9 @@
     <v-data-table :headers="headers" :items="volunteers" class="elevation-1">
       <template v-slot:items="props">
         <td>{{ props.item.name }}</td>
-        <td>{{ props.item.created_at }}</td>
-        <td>{{ props.item.updated_at }}</td>
+        <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
+        <td v-if="props.item.updated_at == null"></td>
+        <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
           <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>

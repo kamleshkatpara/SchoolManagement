@@ -1,6 +1,11 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 import colors from 'vuetify/es5/util/colors'
+import Vuelidate from 'vuelidate'
+
+Vue.use(require('vue-moment'))
+
+Vue.use(Vuelidate)
 
 Vue.use(Vuetify, {
   theme: {

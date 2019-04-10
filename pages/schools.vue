@@ -2,72 +2,101 @@
   <div>
     <v-toolbar flat color="white">
       <v-toolbar-title>Schools</v-toolbar-title>
-      <v-divider
-        class="mx-2"
-        inset
-        vertical
-      ></v-divider>
+      <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
+
+      <v-dialog lazy origin persistent v-model="addDialog" max-width="500px">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
         </template>
         <v-card>
-          <v-card-title>
-            <span class="headline">{{ formTitle }}</span>
-          </v-card-title>
+          <v-form novalidate="novalidate" class="form" @submit.prevent="save">
+            <v-card-text>
+              <v-card-title>
+                <span class="headline">Add School</span>
+              </v-card-title>
+              <v-container>
+                <v-layout wrap>
+                  <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      :error-messages="schoolNameErrors"
+                      name="school_name"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="school_name"
+                      placeholder="School Name"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-container>
 
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.id" label="ID"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.created_at" label="Created Date"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.updated_at" label="Updated Date"></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  :loading="loading"
+                  :disabled="loading"
+                  color="blue darken-1"
+                  flat
+                  type="submit"
+                  @click.native="loader = 'loading'"
+                >Save</v-btn>
+                <v-btn color="blue darken-1" flat @click="addDialog = !addDialog">Cancel</v-btn>
+              </v-card-actions>
+            </v-card-text>
+          </v-form>
+        </v-card>
+      </v-dialog>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-            <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
-          </v-card-actions>
+      <v-dialog v-model="editDialog" max-width="500px">
+        <v-card>
+          <v-form novalidate="novalidate" class="form" @submit.prevent="update">
+            <v-card-text>
+              <v-card-title>
+                <span class="headline">Edit School</span>
+              </v-card-title>
+              <v-container grid-list-md>
+                <v-layout wrap>
+                  <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      :error-messages="schoolNameErrors"
+                      name="school_name"
+                      color="orange"
+                      browser-autocomplete="off"
+                      v-model="school.school_name"
+                      placeholder="School Name"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  :loading="loading"
+                  :disabled="loading"
+                  color="blue darken-1"
+                  flat
+                  type="submit"
+                  @click.native="loader = 'loading'"
+                >Update</v-btn>
+                <v-btn color="blue darken-1" flat @click="editDialog = !editDialog">Cancel</v-btn>
+              </v-card-actions>
+            </v-card-text>
+          </v-form>
         </v-card>
       </v-dialog>
     </v-toolbar>
-    <v-data-table
-      :headers="headers"
-      :items="schools"
-      class="elevation-1"
-    >
+
+    <v-data-table :headers="headers" :items="schools" class="elevation-1">
       <template v-slot:items="props">
-        <td>{{ props.item.id }}</td>
-        <td>{{ props.item.created_at }}</td>
-        <td>{{ props.item.updated_at }}</td>
+        <td>{{ props.item.school_name }}</td>
+        <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
+        <td v-if="props.item.updated_at == null"></td>
+        <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
         <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(props.item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(props.item)"
-          >
-            delete
-          </v-icon>
+          <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
+          <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
         </td>
-      </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>
     </v-data-table>
   </div>
@@ -75,99 +104,118 @@
 
 
 <script>
-  export default {
-    data: () => ({
-      dialog: false,
-      headers: [
-        {
-          text: 'ID',
-          align: 'left',
-          sortable: false,
-          value: 'id'
-        },
-        { text: 'Created', value: 'created_at' },
-        { text: 'Updated', value: 'updated_at' },
-        { text: 'Actions', align: 'center', value: 'id', sortable: false }
-      ],
-      schools: [],
-      editedIndex: -1,
-      editedItem: {
-        id: '',
-      },
-      defaultItem: {
-        id: ''
-      }
-    }),
+import { validationMixin } from 'vuelidate'
+import { required, minLength, helpers } from 'vuelidate/lib/validators'
 
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      }
+export default {
+  mixins: [validationMixin],
+  validations: {
+    school_name: {
+      required,
+      minLength: minLength(2)
+    }
+  },
+  async fetch({ store }) {
+    await store.dispatch('getSchools')
+  },
+  asyncData() {
+    return {
+      name: process.static ? 'static' : process.server ? 'server' : 'client'
+    }
+  },
+  data: () => ({
+    addDialog: false,
+    editDialog: false,
+    loader: null,
+    loading: false,
+    school_name: '',
+    headers: [
+      { text: 'Name', value: 'school_name' },
+      { text: 'Created', value: 'created_at' },
+      { text: 'Updated', value: 'updated_at' },
+      { text: 'Actions', align: 'center', value: 'id', sortable: false }
+    ]
+  }),
+
+  computed: {
+    schoolNameErrors() {
+      const errors = []
+      if (!this.$v.school_name.$dirty) return errors
+      !this.$v.school_name.minLength &&
+        errors.push('Name seems to be very short')
+      !this.$v.shool_name.required &&
+        errors.push('Please enter school name')
+      return errors
     },
-
-    watch: {
-      dialog (val) {
-        val || this.close()
-      }
+    schools() {
+      return this.$store.state.schools
     },
+    school() {
+      return this.$store.state.school
+    }
+  },
+  methods: {
+    save() {
+      if (!this.$v.school_name.$invalid) {
+        this.$store.dispatch('addSchool', {
+          school_name: this.school_name
+        })
 
-    created () {
-      this.initialize()
-    },
+        this.addDialog = false
 
-    methods: {
-      initialize () {
-        this.schools = [
-          {
-            id: 1,
-            created_at: '09/04/2019',
-            updated_at: '09/04/2019',
-          },
-          {
-            id: 2,
-            created_at: '09/04/2019',
-            updated_at: '09/04/2019',
-          },
-                    {
-            id: 2,
-            created_at: '09/04/2019',
-            updated_at: '09/04/2019',
-          },
-          {
-            id: 2,
-            created_at: '09/04/2019',
-            updated_at: '09/04/2019',
-          }
-        ]
-      },
+        this.school_name = ''
 
-      editItem (item) {
-        this.editedIndex = this.schools.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-
-      deleteItem (item) {
-        const index = this.schools.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.schools.splice(index, 1)
-      },
-
-      close () {
-        this.dialog = false
         setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.schools[this.editedIndex], this.editedItem)
-        } else {
-          this.schools.push(this.editedItem)
-        }
-        this.close()
+          this.$store.dispatch('getSchools')
+        }, 700)
+      } else if ((this.$v.school_name.$invalid, (this.addDialog = true))) {
+        this.$v.$touch()
       }
+    },
+
+    editItem(item) {
+      this.$store.dispatch('getSchool', {
+        id: item
+      })
+      this.editDialog = true
+    },
+
+    update() {
+      var today = new Date()
+      var dd = today.getDate()
+      var mm = today.getMonth() + 1 //January is 0!
+
+      var yyyy = today.getFullYear()
+      if (dd < 10) {
+        dd = '0' + dd
+      }
+      if (mm < 10) {
+        mm = '0' + mm
+      }
+      var today = dd + '-' + mm + '-' + yyyy
+
+      this.$store.dispatch('updateSchool', {
+        id: this.school.id,
+        school_name: this.school.school_name,
+        updated_at: today
+      })
+
+      this.editDialog = false
+
+      setTimeout(() => {
+        this.$store.dispatch('getSchools')
+      }, 700)
+    },
+
+    deleteItem(item) {
+      confirm('Are you sure you want to delete this item?') &&
+        this.$store.dispatch('removeSchool', {
+          id: item
+        })
+      setTimeout(() => {
+        this.$store.dispatch('getSchools')
+      }, 700)
     }
   }
+}
 </script>
