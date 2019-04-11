@@ -189,32 +189,35 @@ export default {
     },
 
     update() {
-      var today = new Date()
-      var dd = today.getDate()
-      var mm = today.getMonth() + 1 //January is 0!
+      if(this.school.school_name != '') {
+        var today = new Date()
+        var dd = today.getDate()
+        var mm = today.getMonth() + 1 //January is 0!
 
-      var yyyy = today.getFullYear()
-      if (dd < 10) {
-        dd = '0' + dd
+        var yyyy = today.getFullYear()
+        if (dd < 10) {
+          dd = '0' + dd
+        }
+        if (mm < 10) {
+          mm = '0' + mm
+        }
+        var today = dd + '-' + mm + '-' + yyyy
+
+        this.$store.dispatch('updateSchool', {
+          id: this.school.id,
+          school_name: this.school.school_name,
+          updated_at: today
+        })
+
+        this.editDialog = false
+
+        setTimeout(() => {
+          this.$store.dispatch('getSchools')
+        }, 700)
+      } else {
+        alert('Please enter school name!');
       }
-      if (mm < 10) {
-        mm = '0' + mm
-      }
-      var today = dd + '-' + mm + '-' + yyyy
-
-      this.$store.dispatch('updateSchool', {
-        id: this.school.id,
-        school_name: this.school.school_name,
-        updated_at: today
-      })
-
-      this.editDialog = false
-
-      setTimeout(() => {
-        this.$store.dispatch('getSchools')
-      }, 700)
     },
-
     deleteItem(item) {
       confirm('Are you sure you want to delete this item?') &&
         this.$store.dispatch('removeSchool', {

@@ -274,33 +274,42 @@ export default {
     },
 
     update() {
-      var today = new Date()
-      var dd = today.getDate()
-      var mm = today.getMonth() + 1 //January is 0!
+      if(this.assessment.name != '' && this.assessment.total_score != '') {
+          var today = new Date()
+          var dd = today.getDate()
+          var mm = today.getMonth() + 1 //January is 0!
 
-      var yyyy = today.getFullYear()
-      if (dd < 10) {
-        dd = '0' + dd
+          var yyyy = today.getFullYear()
+          if (dd < 10) {
+            dd = '0' + dd
+          }
+          if (mm < 10) {
+            mm = '0' + mm
+          }
+          var today = dd + '-' + mm + '-' + yyyy
+
+          this.$store.dispatch('updateAssessment', {
+            id: this.assessment.id,
+            name: this.assessment.name,
+            type: this.assessment.type,
+            total_score: this.assessment.total_score,
+            parent_assessment_id: this.assessment.parent_assessment_id,
+            updated_at: today
+          })
+
+          this.editDialog = false
+
+          setTimeout(() => {
+            this.$store.dispatch('getAssessments')
+          }, 700)
+      } else {
+        if(this.assessment.name == '') {
+            alert('Please enter assessment name!')
+        }
+        if(this.assessment.total_score == '') {
+            alert('Please enter total score!')
+        }
       }
-      if (mm < 10) {
-        mm = '0' + mm
-      }
-      var today = dd + '-' + mm + '-' + yyyy
-
-      this.$store.dispatch('updateAssessment', {
-        id: this.assessment.id,
-        name: this.assessment.name,
-        type: this.assessment.type,
-        total_score: this.assessment.total_score,
-        parent_assessment_id: this.assessment.parent_assessment_id,
-        updated_at: today
-      })
-
-      this.editDialog = false
-
-      setTimeout(() => {
-        this.$store.dispatch('getAssessments')
-      }, 700)
     },
 
     deleteItem(item) {
