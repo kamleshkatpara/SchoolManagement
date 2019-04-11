@@ -251,12 +251,12 @@ export const actions = {
     },
 
     async getStudents({ commit }) {
-        const data = await this.$axios.$get(`${process.env.apiURL}/Students`)
+        const data = await this.$axios.$get(`${process.env.apiURL}/Students?filter[where][status]=active`)
         commit('setStudents', data)
     },
 
     async getStudent({ commit }, { id }) {
-        const data = await this.$axios.$get(`${process.env.apiURL}/Students/${id}`)
+        const data = await this.$axios.$get(`${process.env.apiURL}/Students/${id}?filter[where][status]=active`)
         commit('setStudent', data)
     },
 
@@ -265,15 +265,102 @@ export const actions = {
         commit('setStudentNames', data)
     },
 
-    async updateStudent({ commit }, { id, name, type, total_score, parent_Student_id, updated_at }) {
+    async updateStudent({ commit }, { 
+        id,         
+        name,
+        batch_no,
+        role_no,
+        date_of_joining,
+        gender,
+        medium,
+        father_name,
+        father_occupation,
+        father_phone_number,
+        mother_name,
+        mother_occupation,
+        mother_phone_number,
+        address,
+        locality,
+        area,
+        city,
+        no_of_siblings,
+        shoe_size,
+        shirt_size,
+        status,
+        updated_at }) {
         const data = await this.$axios.$put(`${process.env.apiURL}/Students/${id}`, {
-            name, type, total_score, parent_Student_id, updated_at
+            name,
+            batch_no,
+            role_no,
+            date_of_joining,
+            gender,
+            medium,
+            father_name,
+            father_occupation,
+            father_phone_number,
+            mother_name,
+            mother_occupation,
+            mother_phone_number,
+            address,
+            locality,
+            area,
+            city,
+            no_of_siblings,
+            shoe_size,
+            shirt_size,
+            status,
+            updated_at
         })
         commit('setStudent', data)
     },
 
-    async removeStudent({ commit }, { id }) {
-        const data = await this.$axios.$delete(`${process.env.apiURL}/Students/${id}`)
+    async removeStudent({ commit }, { 
+        id,
+        name,
+        batch_no,
+        role_no,
+        date_of_joining,
+        gender,
+        medium,
+        father_name,
+        father_occupation,
+        father_phone_number,
+        mother_name,
+        mother_occupation,
+        mother_phone_number,
+        address,
+        locality,
+        area,
+        city,
+        no_of_siblings,
+        shoe_size,
+        shirt_size,
+        status,
+        deleted_at
+    }) {
+        const data = await this.$axios.$put(`${process.env.apiURL}/Students/${id}`, {
+            name,
+            batch_no,
+            role_no,
+            date_of_joining,
+            gender,
+            medium,
+            father_name,
+            father_occupation,
+            father_phone_number,
+            mother_name,
+            mother_occupation,
+            mother_phone_number,
+            address,
+            locality,
+            area,
+            city,
+            no_of_siblings,
+            shoe_size,
+            shirt_size,
+            status,
+            deleted_at
+        })
         console.log(data)
     },
 

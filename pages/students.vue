@@ -500,6 +500,13 @@
                     ></v-text-field>
                   </v-flex>
 
+                  <v-flex xs12 sm6 md4>
+                    <v-radio-group v-model="student.status" row>
+                        <v-radio label="Active" value="active"></v-radio>
+                        <v-radio label="Inactive" value="inactive"></v-radio>
+                    </v-radio-group>
+                  </v-flex>
+
                 </v-layout>
 
               </v-container>
@@ -528,11 +535,12 @@
         <td>{{ props.item.batch_no }}</td>
         <td>{{ props.item.role_no }}</td>
         <td>{{ props.item.medium }}</td>
-        <td>{{ props.item.created_at }}</td>
-        <td>{{ props.item.updated_at }}</td>
+        <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
+        <td v-if="props.item.updated_at == null"></td>
+        <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
-          <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
+          <v-icon small @click="deleteItem(props.item)">delete</v-icon>
         </td>
       </template>
     </v-data-table>
@@ -1006,11 +1014,27 @@ export default {
       var today = dd + '-' + mm + '-' + yyyy
 
       this.$store.dispatch('updateStudent', {
-        id: this.Student.id,
-        name: this.Student.name,
-        type: this.Student.type,
-        total_score: this.Student.total_score,
-        parent_Student_id: this.Student.parent_Student_id,
+        id: this.student.id,
+        name: this.student.name,
+        batch_no: this.student.batch_no,
+        role_no: this.student.role_no,
+        date_of_joining: this.student.date_of_joining,
+        gender: this.student.gender,
+        medium: this.student.medium,
+        father_name: this.student.father_name,
+        father_occupation: this.student.father_occupation,
+        father_phone_number: this.student.father_phone_number,
+        mother_name: this.student.mother_name,
+        mother_occupation: this.student.mother_occupation,
+        mother_phone_number: this.student.mother_phone_number,
+        address: this.student.address,
+        locality: this.student.locality,
+        area: this.student.area,
+        city: this.student.city,
+        no_of_siblings: this.no_of_siblings,
+        shoe_size: this.student.shoe_size,
+        shirt_size: this.student.shirt_size,
+        status: this.student.status,
         updated_at: today
       })
 
@@ -1022,9 +1046,43 @@ export default {
     },
 
     deleteItem(item) {
+      var today = new Date()
+      var dd = today.getDate()
+      var mm = today.getMonth() + 1 //January is 0!
+
+      var yyyy = today.getFullYear()
+      if (dd < 10) {
+        dd = '0' + dd
+      }
+      if (mm < 10) {
+        mm = '0' + mm
+      }
+      var today = dd + '-' + mm + '-' + yyyy
+
       confirm('Are you sure you want to delete this item?') &&
         this.$store.dispatch('removeStudent', {
-          id: item
+          id: item.id,
+          name: item.name,
+          batch_no: item.batch_no,
+          role_no: item.role_no,
+          date_of_joining: item.date_of_joining,
+          gender: item.gender,
+          medium: item.medium,
+          father_name: item.father_name,
+          father_occupation: item.father_occupation,
+          father_phone_number: item.father_phone_number,
+          mother_name: item.mother_name,
+          mother_occupation: item.mother_occupation,
+          mother_phone_number: item.mother_phone_number,
+          address: item.address,
+          locality: item.locality,
+          area: item.area,
+          city: item.city,
+          no_of_siblings: item.no_of_siblings,
+          shoe_size: item.shoe_size,
+          shirt_size: item.shirt_size,
+          status: 'inactive',
+          deleted_at: today
         })
       setTimeout(() => {
         this.$store.dispatch('getStudents')
