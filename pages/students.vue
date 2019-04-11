@@ -500,13 +500,6 @@
                     ></v-text-field>
                   </v-flex>
 
-                  <v-flex xs12 sm6 md4>
-                    <v-radio-group v-model="student.status" row>
-                        <v-radio label="Active" value="active"></v-radio>
-                        <v-radio label="Inactive" value="inactive"></v-radio>
-                    </v-radio-group>
-                  </v-flex>
-
                 </v-layout>
 
               </v-container>

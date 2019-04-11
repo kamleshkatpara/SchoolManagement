@@ -40,7 +40,7 @@
                   type="submit"
                   @click.native="loader = 'loading'"
                 >Save</v-btn>
-                <v-btn color="blue darken-1" flat @click="addDialog = !addDialog">Cancel</v-btn>
+                <v-btn color="blue darken-1" flat @click="addClose">Cancel</v-btn>
               </v-card-actions>
             </v-card-text>
           </v-form>
@@ -79,7 +79,7 @@
                   type="submit"
                   @click.native="loader = 'loading'"
                 >Update</v-btn>
-                <v-btn color="blue darken-1" flat @click="editDialog = !editDialog">Cancel</v-btn>
+                <v-btn color="blue darken-1" flat @click="editClose">Cancel</v-btn>
               </v-card-actions>
             </v-card-text>
           </v-form>
@@ -144,7 +144,7 @@ export default {
       if (!this.$v.school_name.$dirty) return errors
       !this.$v.school_name.minLength &&
         errors.push('Name seems to be very short')
-      !this.$v.shool_name.required &&
+      !this.$v.school_name.required &&
         errors.push('Please enter school name')
       return errors
     },
@@ -173,7 +173,14 @@ export default {
         this.$v.$touch()
       }
     },
-
+    addClose() {
+      this.addDialog = false
+      this.$v.$reset()
+    },
+    editClose() {
+      this.editDialog = false,
+      this.$v.$reset()
+    },
     editItem(item) {
       this.$store.dispatch('getSchool', {
         id: item
