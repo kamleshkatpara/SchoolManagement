@@ -136,7 +136,7 @@ export default {
       { text: 'Actions', align: 'center', value: 'id', sortable: false }
     ]
   }),
-
+  middleware: 'auth',
   computed: {
     volunteerNameErrors() {
       const errors = []

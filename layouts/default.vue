@@ -4,7 +4,7 @@
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
-      app
+      app v-if="$store.state.authUser"
     >
       <v-list>
         <v-list-tile
@@ -37,7 +37,7 @@
       <v-spacer />
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn icon @click.stop="logout()">
+      <v-btn v-if="$store.state.authUser" icon @click.stop="logout()">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
     </v-toolbar>
@@ -104,8 +104,11 @@ export default {
   },
   methods: {
     logout() {
-      alert('Log Out ?')
-    }
+      localStorage.clear();
+      sessionStorage.clear();
+      this.$store.dispatch('logout', this.$store.state.authTokenId)
+      .then(() => this.$router.go({ name: 'login' }))
+    },
   }
 }
 </script>

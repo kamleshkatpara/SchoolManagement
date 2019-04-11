@@ -687,7 +687,7 @@ export default {
       { text: 'Actions', align: 'center', value: 'id', sortable: false }
     ]
   }),
-
+  middleware: 'auth',
   computed: {
     computedDateFormatted () {
         return this.formatDate(this.date)

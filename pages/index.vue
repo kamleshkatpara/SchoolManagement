@@ -1,59 +1,110 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12 sm8 md6>
-      <div class="text-xs-center"></div>
-      <v-card>
-        <v-card-title class="headline"
-          >Welcome to the Vuetify + Nuxt.js template</v-card-title
-        >
-        <v-card-text>
-          <p>
-            Vuetify is a progressive Material Design component framework for
-            Vue.js. It was designed to empower developers to create amazing
-            applications.
-          </p>
-          <p>
-            For more information on Vuetify, check out the
-            <a href="https://vuetifyjs.com" target="_blank">documentation</a>.
-          </p>
-          <p>
-            If you have questions, please join the official
-            <a href="https://chat.vuetifyjs.com/" target="_blank" title="chat"
-              >discord</a
-            >.
-          </p>
-          <p>
-            Find a bug? Report it on the github
-            <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              title="contribute"
-              >issue board</a
-            >.
-          </p>
-          <p>
-            Thank you for developing with Vuetify and I look forward to bringing
-            more exciting features in the future.
-          </p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3" />
-          <a href="https://nuxtjs.org/" target="_blank">Nuxt Documentation</a>
-          <br />
-          <a href="https://github.com/nuxt/nuxt.js" target="_blank"
-            >Nuxt GitHub</a
-          >
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" flat nuxt to="/schools">Continue</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
-  </v-layout>
+  <v-content>
+    <v-container fluid fill-height>
+      <v-layout align-center justify-center>
+        <v-flex v-if="$store.state.authUser">Hello</v-flex>
+        <v-flex xs12 sm8 md4 v-else>
+          <v-card class="elevation-12">
+            <v-toolbar dark color="primary">
+              <v-spacer></v-spacer>
+              <v-toolbar-title>Please Login</v-toolbar-title>
+              <v-spacer></v-spacer>
+            </v-toolbar>
+            <v-card-text>
+              <v-form novalidate="novalidate" class="loginform" @submit.prevent="login">
+                <v-text-field
+                  prepend-icon="person"
+                  name="username"
+                  :error-messages="usernameErrors"
+                  browser-autocomplete="off"
+                  placeholder="Username"
+                  v-model="username"
+                  type="text"
+                  required
+                ></v-text-field>
+
+                <v-text-field
+                  prepend-icon="lock"
+                  v-model="password"
+                  :error-messages="passwordErrors"
+                  :append-icon="show ? 'visibility_off' : 'visibility'"
+                  :type="show ? 'text' : 'password'"
+                  tabindex="0"
+                  browser-autocomplete="off"
+                  name="password"
+                  placeholder="Password*"
+                  required
+                  @click:append="show = !show"
+                ></v-text-field>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    :loading="loading"
+                    :disabled="loading"
+                    depressed
+                    ripple
+                    color="red white--text"
+                    type="submit"
+                    @click.native="loader = 'loading'"
+                  >Log in</v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </v-content>
 </template>
 
 <script>
-export default {}
+import { validationMixin } from 'vuelidate'
+import { required } from 'vuelidate/lib/validators'
+
+export default {
+  mixins: [validationMixin],
+
+  validations: {
+    username: { required },
+    password: { required }
+  },
+
+  data: () => ({
+    username: '',
+    password: '',
+    loader: null,
+    show: false,
+    loading: false
+  }),
+
+  computed: {
+    usernameErrors() {
+      const errors = []
+      if (!this.$v.username.$dirty) return errors
+      !this.$v.username.required && errors.push('Please enter username')
+      return errors
+    },
+    passwordErrors() {
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+      !this.$v.password.required && errors.push('Please enter password')
+      return errors
+    }
+  },
+  methods: {
+   async login() {
+      console.log(this.username)
+      if (!this.$v.username.$invalid && !this.$v.password.$invalid) {
+        this.loading = true
+       await this.$store.dispatch('login', {
+          username: this.username,
+          password: this.password
+        })
+      } else if (this.$v.username.$invalid && this.$v.password.$invalid) {
+        this.loading = false
+        this.$v.$touch()
+      }
+    }
+  }
+}
 </script>

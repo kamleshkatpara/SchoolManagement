@@ -203,6 +203,7 @@ export default {
       { text: 'Actions', align: 'center', value: 'id', sortable: false }
     ]
   }),
+  middleware: 'auth',
   computed: {
     studentErrors() {
       const errors = []

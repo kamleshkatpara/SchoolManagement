@@ -116,7 +116,7 @@
         protein: 0
       }
     }),
-
+    middleware: 'auth',
     computed: {
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'

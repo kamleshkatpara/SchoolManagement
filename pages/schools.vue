@@ -123,6 +123,7 @@ export default {
       name: process.static ? 'static' : process.server ? 'server' : 'client'
     }
   },
+  middleware: 'auth',
   data: () => ({
     addDialog: false,
     editDialog: false,
