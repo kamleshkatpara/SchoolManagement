@@ -2,7 +2,7 @@
   <v-content>
     <v-container fluid fill-height>
       <v-layout align-center justify-center>
-        <v-flex v-if="$store.state.authUser">Hello</v-flex>
+        <v-flex v-if="$store.state.authUser">Hello {{ $store.state.authUser.user.username.charAt(0).toUpperCase() + $store.state.authUser.user.username.slice(1) }}</v-flex>
         <v-flex xs12 sm8 md4 v-else>
           <v-card class="elevation-12">
             <v-toolbar dark color="primary">
