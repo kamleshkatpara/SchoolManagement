@@ -52,32 +52,35 @@
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
-                    <v-menu
-                      ref="menu1"
-                      v-model="menu1"
-                      :error-messages="dojErrors"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="date_of_joining"
+                            :error-messages="dojErrors"
+                            placeholder="Date Of Joining"
+                            prepend-icon="event"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          ref="picker"
                           v-model="date_of_joining"
-                          label="Date"
-                          hint="MM/DD/YYYY format"
-                          persistent-hint
-                          prepend-icon="event"
-                          @blur="date = parseDate(date_of_joining)"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
-                    </v-menu>
+                          :max="new Date().toISOString().substr(0, 10)"
+                          min="1950-01-01"
+                          @change="savedate"
+                        ></v-date-picker>
+                      </v-menu>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
@@ -261,7 +264,7 @@
         </v-card>
       </v-dialog>
 
-      <!-- <v-dialog v-model="editDialog" max-width="700px">
+      <v-dialog v-model="editDialog" max-width="700px">
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="update">
             <v-card-text>
@@ -305,32 +308,35 @@
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
-                    <v-menu
-                      ref="menu1"
-                      v-model="menu1"
-                      :error-messages="dojErrors"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="student.date_of_joining"
-                          label="Date"
-                          hint="MM/DD/YYYY format"
-                          persistent-hint
-                          prepend-icon="event"
-                          @blur="date = parseDate(date_of_joining)"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
-                    </v-menu>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="student.date_of_joining"
+                            :error-messages="dojErrors"
+                            placeholder="Date Of Joining"
+                            prepend-icon="event"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          ref="picker"
+                          v-model="date_of_joining"
+                          :max="new Date().toISOString().substr(0, 10)"
+                          min="1950-01-01"
+                          @change="savedate"
+                        ></v-date-picker>
+                      </v-menu>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
@@ -495,6 +501,7 @@
                   </v-flex>
 
                 </v-layout>
+
               </v-container>
 
               <v-card-actions>
@@ -512,7 +519,7 @@
             </v-card-text>
           </v-form>
         </v-card>
-      </v-dialog> -->
+      </v-dialog>
     </v-toolbar>
 
     <v-data-table :headers="headers" :items="students" class="elevation-1">
@@ -560,7 +567,7 @@ export default {
     },
     role_no: {
       required,
-      minValue: minValue(1),
+      minLength: minLength(1),
       alphaNum
     },
     date_of_joining: {
@@ -647,15 +654,13 @@ export default {
       name: process.static ? 'static' : process.server ? 'server' : 'client'
     }
   },
-  data: vm => ({
+  data: () => ({
     addDialog: false,
     editDialog: false,
     loader: null,
     loading: false,
-    date: new Date().toISOString().substr(0, 10),
-    date_of_joining: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    menu1: false,
-    menu2: false,
+    date_of_joining: null, 
+    menu: false,
     student_name: '',
     batch_no: '',
     role_no: '',
@@ -689,9 +694,6 @@ export default {
   }),
   middleware: 'auth',
   computed: {
-    computedDateFormatted () {
-        return this.formatDate(this.date)
-    },
     studentNameErrors() {
       const errors = []
       if (!this.$v.student_name.$dirty) return errors
@@ -899,23 +901,11 @@ export default {
     }
   },
   watch: {
-    date (val) {
-      this.date_of_joining = this.formatDate(this.date)
+    menu(val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     }
   },
   methods: {
-    formatDate(date) {
-      if (!date) return null
-
-      const [year, month, day] = date.split('-')
-      return `${day}/${month}/${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
     save() {
 
       if (!this.$v.student_name.$invalid &&
@@ -1039,6 +1029,9 @@ export default {
       setTimeout(() => {
         this.$store.dispatch('getStudents')
       }, 700)
+    },
+    savedate(date_of_joining) {
+      this.$refs.menu.save(date_of_joining)
     }
   }
 }
