@@ -7,7 +7,7 @@
 
       <v-dialog lazy origin persistent v-model="addDialog" max-width="500px">
         <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+          <v-btn color="primary" dark class="mb-2" v-on="on" @click="$v.$reset">New Item</v-btn>
         </template>
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="save">
@@ -71,7 +71,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="editDialog" max-width="500px">
+      <v-dialog lazy origin persistent v-model="editDialog" max-width="500px">
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="update">
             <v-card-text>
@@ -134,7 +134,14 @@
       
     </v-toolbar>
 
-    <v-data-table :headers="headers" :items="assessments" class="elevation-1">
+    <v-card>
+      <v-card-title>
+        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+      <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
+      <v-icon dark>refresh</v-icon>
+    </v-btn>
+      </v-card-title>
+    <v-data-table :headers="headers" :search="search" hide-actions :pagination.sync="pagination" :items="assessments" class="elevation-1">
       <template v-slot:items="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.type }}</td>
@@ -144,11 +151,21 @@
         <td v-if="props.item.updated_at == null"></td>
         <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
         <td class="justify-center layout px-0">
-          <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
+          <v-icon small class="mr-2" @click="editItem(props.item.id) && $v.$reset">edit</v-icon>
           <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
         </td>
       </template>
     </v-data-table>
+    </v-card>
+        <div class="text-xs-center pt-2">
+      <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
+    </div>
+    <v-snackbar v-model="snackbar" :color="color" :timeout="timeout" top>
+      {{ this.status
+      }}
+      <v-icon dark size="10" @click="snackbar = false">fas fa-times fa-xs</v-icon>
+    </v-snackbar>
+
   </div>
 </template>
 
@@ -176,16 +193,17 @@ export default {
   async fetch({ store }) {
     await store.dispatch('getAssessments')
   },
-  asyncData() {
-    return {
-      name: process.static ? 'static' : process.server ? 'server' : 'client'
-    }
-  },
   data: () => ({
     addDialog: false,
     editDialog: false,
+    pagination: {},
+    search: '',
     loader: null,
     loading: false,
+    snackbar: false,
+    status: '',
+    color: '',
+    timeout: 2000,
     assessmentname: '',
     assessmentTypes: ["baseline","midline","endline"],
     assessmenttype: '',
@@ -203,6 +221,15 @@ export default {
   }),
   middleware: 'auth',
   computed: {
+        pages() {
+      if (
+        this.pagination.rowsPerPage == null ||
+        this.pagination.totalItems == null
+      )
+        return 0
+
+      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+    },
     assessmentNameErrors() {
       const errors = []
       if (!this.$v.assessmentname.$dirty) return errors
@@ -242,6 +269,7 @@ export default {
       if (!this.$v.assessmentname.$invalid &&
         !this.$v.assessmenttype.$invalid &&
         !this.$v.total_score.$invalid) {
+        
         this.$store.dispatch('addAssessment', {
           name: this.assessmentname,
           type: this.assessmenttype,
@@ -259,6 +287,7 @@ export default {
         setTimeout(() => {
           this.$store.dispatch('getAssessments')
         }, 700)
+
       } else if ((this.$v.assessmentname.$invalid && 
       this.$v.assessmenttype.$invalid && this.$v.total_score.$invalid
       , (this.addDialog = true))) {
@@ -275,26 +304,14 @@ export default {
 
     update() {
       if(this.assessment.name != '' && this.assessment.total_score != '') {
-          var today = new Date()
-          var dd = today.getDate()
-          var mm = today.getMonth() + 1 //January is 0!
-
-          var yyyy = today.getFullYear()
-          if (dd < 10) {
-            dd = '0' + dd
-          }
-          if (mm < 10) {
-            mm = '0' + mm
-          }
-          var today = dd + '-' + mm + '-' + yyyy
-
+          
           this.$store.dispatch('updateAssessment', {
             id: this.assessment.id,
             name: this.assessment.name,
             type: this.assessment.type,
             total_score: this.assessment.total_score,
             parent_assessment_id: this.assessment.parent_assessment_id,
-            updated_at: today
+            updated_at: new Date()
           })
 
           this.editDialog = false
@@ -304,10 +321,16 @@ export default {
           }, 700)
       } else {
         if(this.assessment.name == '') {
-            alert('Please enter assessment name!')
+                   this.snackbar = true
+        this.color = 'red darken-4'
+        window.navigator.vibrate(200)
+        this.status = 'Please enter assessment name !'
         }
         if(this.assessment.total_score == '') {
-            alert('Please enter total score!')
+                   this.snackbar = true
+        this.color = 'red darken-4'
+        window.navigator.vibrate(200)
+        this.status = 'Please enter total score !'
         }
       }
     },
@@ -317,9 +340,18 @@ export default {
         this.$store.dispatch('removeAssessment', {
           id: item
         })
+      
+            this.snackbar = true
+      this.color = 'success darken-4'
+      window.navigator.vibrate(200)
+      this.status = 'Item deleted successfully'
+
       setTimeout(() => {
         this.$store.dispatch('getAssessments')
       }, 700)
+    },
+    refreshData() {
+      this.$store.dispatch('getAssessments')
     }
   }
 }

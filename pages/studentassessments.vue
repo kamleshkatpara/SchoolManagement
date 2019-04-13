@@ -115,13 +115,122 @@
           </v-form>
         </v-card>
       </v-dialog>
+
+      <v-dialog lazy origin persistent v-model="editDialog" max-width="500px">
+        <v-card>
+          <v-form novalidate="novalidate" class="form" @submit.prevent="save">
+            <v-card-text>
+              <v-card-title>
+                <span class="headline">Edit Student Assessment</span>
+              </v-card-title>
+              <v-container>
+                <v-layout wrap>
+                  <v-flex xs12 sm12 md12>
+                    <v-autocomplete
+                      v-model="student"
+                      :items="studentitems"
+                      :error-messages="studentErrors"
+                      :search-input.sync="searchStudent"
+                      hide-no-data
+                      hide-selected
+                      item-text="Studentname"
+                      placeholder="Please select student"
+                      return-object
+                    ></v-autocomplete>
+
+                    <v-autocomplete
+                      v-model="studentassessment.assessment"
+                      :items="assessmentitems"
+                      :error-messages="assessmentErrors"
+                      :search-input.sync="searchAssessment"
+                      hide-no-data
+                      hide-selected
+                      item-text="Assessmentname"
+                      placeholder="Please select assessment"
+                      return-object
+                    ></v-autocomplete>
+
+                    <v-autocomplete
+                      v-model="studentassessment.volunteer"
+                      :items="volunteeritems"
+                      :error-messages="volunteerErrors"
+                      :search-input.sync="searchVolunteer"
+                      hide-no-data
+                      hide-selected
+                      item-text="Volunteername"
+                      placeholder="Please select volunteer"
+                      return-object
+                    ></v-autocomplete>
+
+                    <v-layout wrap>
+                      <v-flex xs12 sm6 md6>
+                        <v-text-field
+                          v-model="studentassessment.score"
+                          :error-messages="scoreErrors"
+                          placeholder="Please enter score"
+                        ></v-text-field>
+                      </v-flex>
+
+                      <v-flex xs12 sm6 md6>
+                        <v-menu
+                          ref="menu"
+                          v-model="menu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="studentassessment.assessmentdate"
+                              :error-messages="assessmentDateErrors"
+                              placeholder="Assessment date"
+                              prepend-icon="event"
+                              readonly
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            ref="picker"
+                            v-model="studentassessment.assessmentdate"
+                            :max="new Date().toISOString().substr(0, 10)"
+                            min="1950-01-01"
+                            @change="savedate"
+                          ></v-date-picker>
+                        </v-menu>
+                      </v-flex>
+                    </v-layout>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  :loading="loading"
+                  :disabled="loading"
+                  color="blue darken-1"
+                  flat
+                  type="submit"
+                  @click.native="loader = 'loading'"
+                >Update</v-btn>
+                <v-btn color="blue darken-1" flat @click="editDialog = !editDialog">Cancel</v-btn>
+              </v-card-actions>
+            </v-card-text>
+          </v-form>
+        </v-card>
+      </v-dialog>
+
     </v-toolbar>
 
     <v-data-table :headers="headers" :items="studentassessments" class="elevation-1">
       <template v-slot:items="props">
-        <td>{{ props.item.student_id }}</td>
-        <td>{{ props.item.assessment_id }}</td>
-        <td>{{ props.item.volunteer_id }}</td>
+        <td>{{ props.item.student }}</td>
+        <td>{{ props.item.assessment }}</td>
+        <td>{{ props.item.volunteer }}</td>
         <td>{{ props.item.score }}</td>
         <td>{{ props.item.assessment_date | moment("DD / MM / YYYY") }}</td>
         <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
@@ -193,9 +302,9 @@ export default {
     loader: null,
     loading: false,
     headers: [
-      { text: 'Student Name', value: 'student_id' },
-      { text: 'Assessment', value: 'assessment_id' },
-      { text: 'Volunteer Name', value: 'volunteer_id' },
+      { text: 'Student Name', value: 'studentname' },
+      { text: 'Assessment', value: 'assessmentname' },
+      { text: 'Volunteer Name', value: 'volunteername' },
       { text: 'Score', value: 'score' },
       { text: 'Assessment Date', value: 'assessment_date' },
       { text: 'Created', value: 'created_at' },
@@ -265,6 +374,9 @@ export default {
     },
     studentassessments() {
       return this.$store.state.student_assessments
+    },
+    studentassessment() {
+      return this.$store.state.student_assessment
     }
   },
   methods: {
@@ -305,7 +417,10 @@ export default {
       }
     },
     editItem(item) {
-      console.log(item);
+      this.$store.dispatch('getStudentAssessment', {
+        id: item
+      })
+      this.editDialog = true
     },
     deleteItem(item) {
       confirm('Are you sure you want to delete this item?') &&

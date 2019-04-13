@@ -7,7 +7,7 @@
 
       <v-dialog lazy origin persistent v-model="addDialog" max-width="700px">
         <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+          <v-btn color="primary" dark class="mb-2" v-on="on" @click="$v.$reset">New Item</v-btn>
         </template>
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="save">
@@ -53,34 +53,34 @@
 
                   <v-flex xs12 sm6 md4>
                       <v-menu
-                        ref="menu"
-                        v-model="menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
+                          ref="menu"
+                          v-model="menu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date_of_joining"
+                              :error-messages="dojErrors"
+                              placeholder="Assessment date"
+                              prepend-icon="event"
+                              readonly
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            ref="picker"
                             v-model="date_of_joining"
-                            :error-messages="dojErrors"
-                            placeholder="Date Of Joining"
-                            prepend-icon="event"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          ref="picker"
-                          v-model="date_of_joining"
-                          :max="new Date().toISOString().substr(0, 10)"
-                          min="1950-01-01"
-                          @change="savedate"
-                        ></v-date-picker>
-                      </v-menu>
+                            :max="new Date().toISOString().substr(0, 10)"
+                            min="1950-01-01"
+                            @change="savedate"
+                          ></v-date-picker>
+                        </v-menu>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
@@ -257,14 +257,14 @@
                   type="submit"
                   @click.native="loader = 'loading'"
                 >Save</v-btn>
-                <v-btn color="blue darken-1" flat @click="addDialog = !addDialog">Cancel</v-btn>
+                <v-btn color="blue darken-1" flat @click="addClose">Cancel</v-btn>
               </v-card-actions>
             </v-card-text>
           </v-form>
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="editDialog" max-width="700px">
+      <v-dialog lazy origin persistent v-model="editDialog" max-width="700px">
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="update">
             <v-card-text>
@@ -310,7 +310,7 @@
                   <v-flex xs12 sm6 md4>
                       <v-menu
                         ref="menu"
-                        v-model="menu"
+                        v-model="menu2"
                         :close-on-content-click="false"
                         :nudge-right="40"
                         lazy
@@ -321,7 +321,7 @@
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="student.date_of_joining"
+                            v-model="date_of_joining"
                             :error-messages="dojErrors"
                             placeholder="Date Of Joining"
                             prepend-icon="event"
@@ -334,7 +334,7 @@
                           v-model="date_of_joining"
                           :max="new Date().toISOString().substr(0, 10)"
                           min="1950-01-01"
-                          @change="savedate"
+                          @change="saveupdatedate"
                         ></v-date-picker>
                       </v-menu>
                   </v-flex>
@@ -514,7 +514,7 @@
                   type="submit"
                   @click.native="loader = 'loading'"
                 >Update</v-btn>
-                <v-btn color="blue darken-1" flat @click="editDialog = !editDialog">Cancel</v-btn>
+                <v-btn color="blue darken-1" flat @click="editClose">Cancel</v-btn>
               </v-card-actions>
             </v-card-text>
           </v-form>
@@ -522,7 +522,14 @@
       </v-dialog>
     </v-toolbar>
 
-    <v-data-table :headers="headers" :items="students" class="elevation-1">
+    <v-card>
+      <v-card-title>
+        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+      <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
+      <v-icon dark>refresh</v-icon>
+    </v-btn>
+      </v-card-title>
+    <v-data-table :headers="headers" :search="search" hide-actions :pagination.sync="pagination" :items="students" class="elevation-1">
       <template v-slot:items="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.batch_no }}</td>
@@ -532,11 +539,20 @@
         <td v-if="props.item.updated_at == null"></td>
         <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
         <td class="justify-center layout px-0">
-          <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
+          <v-icon small class="mr-2" @click="editItem(props.item.id) && $v.$reset">edit</v-icon>
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>
         </td>
       </template>
     </v-data-table>
+        </v-card>
+        <div class="text-xs-center pt-2">
+      <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
+    </div>
+    <v-snackbar v-model="snackbar" :color="color" :timeout="timeout" top>
+      {{ this.status
+      }}
+      <v-icon dark size="10" @click="snackbar = false">fas fa-times fa-xs</v-icon>
+    </v-snackbar>
   </div>
 </template>
 
@@ -558,7 +574,6 @@ export default {
   validations: {
     student_name: {
       required,
-      alpha,
       minLength: minLength(2)
     },
     batch_no: {
@@ -584,12 +599,10 @@ export default {
     },
     father_name: {
       required,
-      alpha,
       minLength: minLength(3)
     },
     father_occupation: {
       required,
-      alpha,
       minLength: minLength(4)
     },
     father_phone_number: {
@@ -599,12 +612,10 @@ export default {
     },
     mother_name: {
       required,
-      alpha,
       minLength: minLength(3)
     },
     mother_occupation: {
       required,
-      alpha,
       minLength: minLength(4)
     },
     mother_phone_number: {
@@ -618,18 +629,15 @@ export default {
     },
     student_locality: {
       required,
-      minLength: minLength(3),
-      alpha
+      minLength: minLength(3)
     },
     student_area: {
       required,
-      minLength: minLength(3),
-      alpha
+      minLength: minLength(3)
     },
     student_city: {
       required,
-      minLength: minLength(3),
-      alpha
+      minLength: minLength(3)
     },
     no_of_siblings: {
       required,
@@ -650,22 +658,24 @@ export default {
   async fetch({ store }) {
     await store.dispatch('getStudents')
   },
-  asyncData() {
-    return {
-      name: process.static ? 'static' : process.server ? 'server' : 'client'
-    }
-  },
   data: () => ({
     addDialog: false,
     editDialog: false,
     loader: null,
     loading: false,
-    date_of_joining: null, 
+    pagination: {},
+    search: '',
+    snackbar: false,
+    status: '',
+    color: '',
+    timeout: 2000,
+    date_of_joining: '', 
     menu: false,
+    menu2: false,
     student_name: '',
     batch_no: '',
     role_no: '',
-    genders: ['Male', 'Female'],
+    genders: ['M', 'F'],
     gender: '',
     medium: '',
     father_name: '',
@@ -702,8 +712,6 @@ export default {
         errors.push('Name seems to be very short')
       !this.$v.student_name.required &&
         errors.push('Please enter student name')
-      !this.$v.student_name.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     batchNoErrors() {
@@ -760,8 +768,6 @@ export default {
         errors.push('Father Name seems to be very short')
       !this.$v.father_name.required &&
         errors.push('Please enter father name')
-      !this.$v.father_name.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     fatherOccupationErrors() {
@@ -771,8 +777,6 @@ export default {
         errors.push('Father occupation seems to be very short')
       !this.$v.father_occupation.required &&
         errors.push('Please enter father occupation')
-      !this.$v.father_occupation.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     fatherPhoneNumberErrors() {
@@ -793,8 +797,6 @@ export default {
         errors.push('Mother Name seems to be very short')
       !this.$v.mother_name.required &&
         errors.push('Please enter mother name')
-      !this.$v.mother_name.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     motherOccupationErrors() {
@@ -804,8 +806,6 @@ export default {
         errors.push('Mother occupation seems to be very short')
       !this.$v.mother_occupation.required &&
         errors.push('Please enter mother occupation')
-      !this.$v.mother_occupation.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     motherPhoneNumberErrors() {
@@ -835,8 +835,6 @@ export default {
         errors.push('Student Locality seems to be very short')
       !this.$v.student_locality.required &&
         errors.push('Please enter student locality')
-      !this.$v.student_locality.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     studentAreaErrors() {
@@ -846,8 +844,6 @@ export default {
         errors.push('Student area seems to be very short')
       !this.$v.student_area.required &&
         errors.push('Please enter student area')
-      !this.$v.student_area.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     studentCityErrors() {
@@ -857,8 +853,6 @@ export default {
         errors.push('Student City seems to be very short')
       !this.$v.student_city.required &&
         errors.push('Please enter student city')
-      !this.$v.student_city.alpha &&
-        errors.push('Only alphabets allowed !')
       return errors
     },
     noOfSiblingsErrors() {
@@ -899,13 +893,22 @@ export default {
     },
     student() {
       return this.$store.state.student
+    },
+    pages() {
+      if (
+        this.pagination.rowsPerPage == null ||
+        this.pagination.totalItems == null
+      )
+        return 0
+
+      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     }
   },
   watch: {
     menu(val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     }
-  },
+  }, 
   methods: {
     save() {
 
@@ -949,10 +952,31 @@ export default {
             no_of_siblings: this.no_of_siblings,
             shoe_size: this.student_shoe_size,
             shirt_size: this.student_shirt_size,
-            status: 'active'
+            status: 'active',
+            created_at: new Date()
           })
 
-          this.addDialog = false
+          this.addDialog = false;
+
+            this.student_name  = '';
+            this.batch_no  = '';
+            this.role_no  = '';
+            this.date_of_joining;
+            this.gender  = '';
+            this.medium  = '';
+            this.father_name  = '';
+            this.father_occupation  = '';
+            this.father_phone_number  = '';
+            this.mother_name  = '';
+            this.mother_occupation  = '';
+            this.mother_phone_number  = '';
+            this.student_address  = '';
+            this.student_locality  = '';
+            this.student_area  = '';
+            this.student_city  = '';
+            this.no_of_siblings  = '';
+            this.student_shoe_size  = '';
+            this.student_shirt_size = ''
 
           setTimeout(() => {
             this.$store.dispatch('getStudents')
@@ -993,19 +1017,6 @@ export default {
     },
 
     update() {
-      var today = new Date()
-      var dd = today.getDate()
-      var mm = today.getMonth() + 1 //January is 0!
-
-      var yyyy = today.getFullYear()
-      if (dd < 10) {
-        dd = '0' + dd
-      }
-      if (mm < 10) {
-        mm = '0' + mm
-      }
-      var today = dd + '-' + mm + '-' + yyyy
-
       this.$store.dispatch('updateStudent', {
         id: this.student.id,
         name: this.student.name,
@@ -1028,7 +1039,7 @@ export default {
         shoe_size: this.student.shoe_size,
         shirt_size: this.student.shirt_size,
         status: this.student.status,
-        updated_at: today
+        updated_at: new Date()
       })
 
       this.editDialog = false
@@ -1037,22 +1048,54 @@ export default {
         this.$store.dispatch('getStudents')
       }, 700)
     },
-
+    addClose() {
+      this.addDialog = false;
+      this.student_name  = '';
+      this.batch_no  = '';
+      this.role_no  = '';
+      this.date_of_joining = '';
+      this.gender  = '';
+      this.medium  = '';
+      this.father_name  = '';
+      this.father_occupation  = '';
+      this.father_phone_number  = '';
+      this.mother_name  = '';
+      this.mother_occupation  = '';
+      this.mother_phone_number  = '';
+      this.student_address  = '';
+      this.student_locality  = '';
+      this.student_area  = '';
+      this.student_city  = '';
+      this.no_of_siblings  = '';
+      this.student_shoe_size  = '';
+      this.student_shirt_size = ''
+      this.$v.$reset();
+    },
+    editClose() {
+      this.editDialog = false;
+      this.student_name  = '';
+      this.batch_no  = '';
+      this.role_no  = '';
+      this.date_of_joining = '';
+      this.gender  = '';
+      this.medium  = '';
+      this.father_name  = '';
+      this.father_occupation  = '';
+      this.father_phone_number  = '';
+      this.mother_name  = '';
+      this.mother_occupation  = '';
+      this.mother_phone_number  = '';
+      this.student_address  = '';
+      this.student_locality  = '';
+      this.student_area  = '';
+      this.student_city  = '';
+      this.no_of_siblings  = '';
+      this.student_shoe_size  = '';
+      this.student_shirt_size = ''
+      this.$v.$reset();
+    },
     deleteItem(item) {
-      var today = new Date()
-      var dd = today.getDate()
-      var mm = today.getMonth() + 1 //January is 0!
-
-      var yyyy = today.getFullYear()
-      if (dd < 10) {
-        dd = '0' + dd
-      }
-      if (mm < 10) {
-        mm = '0' + mm
-      }
-      var today = dd + '-' + mm + '-' + yyyy
-
-      confirm('Are you sure you want to delete this item?') &&
+        confirm('Are you sure you want to delete this item?') &&
         this.$store.dispatch('removeStudent', {
           id: item.id,
           name: item.name,
@@ -1075,14 +1118,26 @@ export default {
           shoe_size: item.shoe_size,
           shirt_size: item.shirt_size,
           status: 'inactive',
-          deleted_at: today
-        })
+          deleted_at: new Date()
+        });
+
+        this.snackbar = true
+        this.color = 'success darken-4'
+        window.navigator.vibrate(200)
+        this.status = 'Item deleted successfully'
+
       setTimeout(() => {
         this.$store.dispatch('getStudents')
       }, 700)
     },
     savedate(date_of_joining) {
       this.$refs.menu.save(date_of_joining)
+    },
+    saveupdatedate(date_of_joining) {
+      this.$refs.menu.save(date_of_joining);
+    },
+    refreshData() {
+      this.$store.dispatch('getStudents')
     }
   }
 }

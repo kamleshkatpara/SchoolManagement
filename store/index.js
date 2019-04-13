@@ -165,10 +165,9 @@ export const actions = {
 
     //  School Operations from here
 
-    async addSchool({ commit }, { school_name }) {
+    async addSchool({ commit }, { name, created_at }) {
         try {
-            const data = await this.$axios.$post(`${process.env.apiURL}/Schools`, { school_name });
-            console.log(data)
+            const data = await this.$axios.$post(`${process.env.apiURL}/Schools`, { name, created_at });
         } catch (err) {
             console.log(err)
         }
@@ -184,9 +183,9 @@ export const actions = {
         commit('setSchool', data)
     },
 
-    async updateSchool({ commit }, { id, school_name, updated_at }) {
+    async updateSchool({ commit }, { id, name, updated_at }) {
         const data = await this.$axios.$put(`${process.env.apiURL}/Schools/${id}`, {
-            school_name: school_name,
+            name: name,
             updated_at: updated_at
         })
         commit('setSchool', data)
@@ -219,7 +218,8 @@ export const actions = {
         no_of_siblings,
         shoe_size,
         shirt_size,
-        status
+        status,
+        created_at
      }) {
         try {
             const data = await this.$axios.$post(`${process.env.apiURL}/Students`, {
@@ -242,7 +242,8 @@ export const actions = {
                 no_of_siblings,
                 shoe_size,
                 shirt_size,
-                status
+                status,
+                created_at
              });
             console.log(data)
         } catch (err) {
@@ -366,9 +367,9 @@ export const actions = {
 
     // Assessment Operations from here
 
-    async addAssessment({ commit }, { name, type, total_score, parent_assessment_id }) {
+    async addAssessment({ commit }, { name, type, total_score, parent_assessment_id, created_at }) {
         try {
-            const data = await this.$axios.$post(`${process.env.apiURL}/Assessments`, { name, type, total_score, parent_assessment_id });
+            const data = await this.$axios.$post(`${process.env.apiURL}/Assessments`, { name, type, total_score, parent_assessment_id, created_at });
             console.log(data)
         } catch (err) {
             console.log(err)
@@ -404,9 +405,9 @@ export const actions = {
 
     //  Volunteer Operations from here
 
-    async addVolunteer({ commit }, { name }) {
+    async addVolunteer({ commit }, { name, created_at }) {
         try {
-            const data = await this.$axios.$post(`${process.env.apiURL}/Volunteers`, { name });
+            const data = await this.$axios.$post(`${process.env.apiURL}/Volunteers`, { name, created_at });
             console.log(data)
         } catch (err) {
             console.log(err)
@@ -443,9 +444,9 @@ export const actions = {
 
         // StudentAssessments Operations from here
 
-        async addStudentAssessment({ commit }, { student_id, assessment_id, volunteer_id, score, assessment_date }) {
+        async addStudentAssessment({ commit }, { student_id, assessment_id, volunteer_id, score, assessment_date, created_at }) {
             try {
-                const data = await this.$axios.$post(`${process.env.apiURL}/StudentAssessments`, { student_id, assessment_id, volunteer_id, score, assessment_date });
+                const data = await this.$axios.$post(`${process.env.apiURL}/Student_Assessments`, { student_id, assessment_id, volunteer_id, score, assessment_date, created_at });
                 console.log(data)
             } catch (err) {
                 console.log(err)
@@ -453,24 +454,25 @@ export const actions = {
         },
     
         async getStudentAssessments({ commit }) {
-            const data = await this.$axios.$get(`${process.env.apiURL}/StudentAssessments`)
+            const data = await this.$axios.$get(`${process.env.apiURL}/Student_Assessments/getStudentAssessments`)
             commit('setStudentAssessments', data)
         },
     
         async getStudentAssessment({ commit }, { id }) {
-            const data = await this.$axios.$get(`${process.env.apiURL}/StudentAssessments/${id}`)
-            commit('setStudentAssessment', data)
+            const data = await this.$axios.$get(`${process.env.apiURL}/Student_Assessments/getStudentAssessment?id=${id}`)
+            console.log(data[0])
+            commit('setStudentAssessment', data[0])
         },
     
         async updateStudentAssessment({ commit }, { id, student_id, assessment_id, volunteer_id, score, assessment_date, updated_at }) {
-            const data = await this.$axios.$put(`${process.env.apiURL}/StudentAssessments/${id}`, {
+            const data = await this.$axios.$put(`${process.env.apiURL}/Student_Assessments/${id}`, {
                 student_id, assessment_id, volunteer_id, score, assessment_date, updated_at
             })
             commit('setStudentAssessment', data)
         },
     
         async removeStudentAssessment({ commit }, { id }) {
-            const data = await this.$axios.$delete(`${process.env.apiURL}/StudentAssessments/${id}`)
+            const data = await this.$axios.$delete(`${process.env.apiURL}/Student_Assessments/${id}`)
             console.log(data)
         }    
 }
