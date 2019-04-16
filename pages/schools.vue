@@ -193,8 +193,7 @@ export default {
     save() {
       if (!this.$v.schoolname.$invalid) {
         this.$store.dispatch('addSchool', {
-          name: this.schoolname,
-          created_at: new Date()
+          name: this.schoolname
         })
 
         this.addDialog = false

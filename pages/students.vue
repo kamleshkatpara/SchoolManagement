@@ -17,7 +17,6 @@
               </v-card-title>
               <v-container grid-list-md>
                 <v-layout wrap>
-                  
                   <v-flex xs12 sm6 md4>
                     <v-text-field
                       name="student_name"
@@ -52,41 +51,44 @@
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
-                      <v-menu
-                          ref="menu"
-                          v-model="menu"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          lazy
-                          transition="scale-transition"
-                          offset-y
-                          full-width
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="date_of_joining"
-                              :error-messages="dojErrors"
-                              placeholder="Assessment date"
-                              prepend-icon="event"
-                              readonly
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            ref="picker"
-                            v-model="date_of_joining"
-                            :max="new Date().toISOString().substr(0, 10)"
-                            min="1950-01-01"
-                            @change="savedate"
-                          ></v-date-picker>
-                        </v-menu>
+                    <v-menu
+                      ref="menu"
+                      v-model="menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="date_of_joining"
+                          :error-messages="dojErrors"
+                          placeholder="Assessment date"
+                          prepend-icon="event"
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        ref="picker"
+                        v-model="date_of_joining"
+                        :max="new Date().toISOString().substr(0, 10)"
+                        min="1950-01-01"
+                        @change="savedate"
+                      ></v-date-picker>
+                    </v-menu>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
-                    <v-select :items="genders" v-model="gender"
-                    placeholder="Select Gender" name="gender"
-                    :error-messages="genderErrors"
+                    <v-select
+                      :items="genders"
+                      v-model="gender"
+                      placeholder="Select Gender"
+                      name="gender"
+                      :error-messages="genderErrors"
                     ></v-select>
                   </v-flex>
 
@@ -168,14 +170,14 @@
                   </v-flex>
 
                   <v-flex xs12 sm12 md12>
-                     <v-textarea
-                        name="student_address"
-                        placeholder="Address"
-                        color="orange"
-                        :error-messages="studentAddressErrors"
-                        browser-autocomplete="off"
-                        v-model="student_address"
-                      ></v-textarea>
+                    <v-textarea
+                      name="student_address"
+                      placeholder="Address"
+                      color="orange"
+                      :error-messages="studentAddressErrors"
+                      browser-autocomplete="off"
+                      v-model="student_address"
+                    ></v-textarea>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
@@ -188,7 +190,7 @@
                       placeholder="Locality"
                     ></v-text-field>
                   </v-flex>
-                  
+
                   <v-flex xs12 sm6 md4>
                     <v-text-field
                       name="student_area"
@@ -243,7 +245,6 @@
                       placeholder="Shirt Size"
                     ></v-text-field>
                   </v-flex>
-
                 </v-layout>
               </v-container>
 
@@ -273,7 +274,6 @@
               </v-card-title>
               <v-container grid-list-md>
                 <v-layout wrap>
-                  
                   <v-flex xs12 sm6 md4>
                     <v-text-field
                       name="student_name"
@@ -308,41 +308,44 @@
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
-                      <v-menu
-                        ref="menu"
-                        v-model="menu2"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="date_of_joining"
-                            :error-messages="dojErrors"
-                            placeholder="Date Of Joining"
-                            prepend-icon="event"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          ref="picker"
+                    <v-menu
+                      ref="menu"
+                      v-model="menu2"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
                           v-model="date_of_joining"
-                          :max="new Date().toISOString().substr(0, 10)"
-                          min="1950-01-01"
-                          @change="saveupdatedate"
-                        ></v-date-picker>
-                      </v-menu>
+                          :error-messages="dojErrors"
+                          placeholder="Date Of Joining"
+                          prepend-icon="event"
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        ref="picker"
+                        v-model="date_of_joining"
+                        :max="new Date().toISOString().substr(0, 10)"
+                        min="1950-01-01"
+                        @change="saveupdatedate"
+                      ></v-date-picker>
+                    </v-menu>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
-                    <v-select :items="genders" v-model="student.gender"
-                    placeholder="Select Gender" name="gender"
-                    :error-messages="genderErrors"
+                    <v-select
+                      :items="genders"
+                      v-model="student.gender"
+                      placeholder="Select Gender"
+                      name="gender"
+                      :error-messages="genderErrors"
                     ></v-select>
                   </v-flex>
 
@@ -424,14 +427,14 @@
                   </v-flex>
 
                   <v-flex xs12 sm12 md12>
-                     <v-textarea
-                        name="student_address"
-                        placeholder="Address"
-                        color="orange"
-                        :error-messages="studentAddressErrors"
-                        browser-autocomplete="off"
-                        v-model="student.address"
-                      ></v-textarea>
+                    <v-textarea
+                      name="student_address"
+                      placeholder="Address"
+                      color="orange"
+                      :error-messages="studentAddressErrors"
+                      browser-autocomplete="off"
+                      v-model="student.address"
+                    ></v-textarea>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
@@ -444,7 +447,7 @@
                       placeholder="Locality"
                     ></v-text-field>
                   </v-flex>
-                  
+
                   <v-flex xs12 sm6 md4>
                     <v-text-field
                       name="student_area"
@@ -499,9 +502,7 @@
                       placeholder="Shirt Size"
                     ></v-text-field>
                   </v-flex>
-
                 </v-layout>
-
               </v-container>
 
               <v-card-actions>
@@ -525,27 +526,36 @@
     <v-card>
       <v-card-title>
         <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-      <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
-      <v-icon dark>refresh</v-icon>
-    </v-btn>
+        <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
+          <v-icon dark>refresh</v-icon>
+        </v-btn>
       </v-card-title>
-    <v-data-table :headers="headers" :search="search" hide-actions :pagination.sync="pagination" :items="students" class="elevation-1">
-      <template v-slot:items="props">
-        <td>{{ props.item.name }}</td>
-        <td>{{ props.item.batch_no }}</td>
-        <td>{{ props.item.role_no }}</td>
-        <td>{{ props.item.medium }}</td>
-        <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
-        <td v-if="props.item.updated_at == null"></td>
-        <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon small class="mr-2" @click="editItem(props.item.id) && $v.$reset">edit</v-icon>
-          <v-icon small @click="deleteItem(props.item)">delete</v-icon>
-        </td>
-      </template>
-    </v-data-table>
-        </v-card>
-        <div class="text-xs-center pt-2">
+      <v-data-table
+        :headers="headers"
+        :search="search"
+        hide-actions
+        :pagination.sync="pagination"
+        :items="students"
+        class="elevation-1"
+      >
+        <template v-slot:items="props">
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.batch_no }}</td>
+          <td>{{ props.item.role_no }}</td>
+          <td>{{ props.item.medium }}</td>
+          <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
+          <td v-if="props.item.updated_at == null"></td>
+          <td
+            v-if="props.item.updated_at != null"
+          >{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
+          <td class="justify-center layout px-0">
+            <v-icon small class="mr-2" @click="editItem(props.item.id) && $v.$reset">edit</v-icon>
+            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+          </td>
+        </template>
+      </v-data-table>
+    </v-card>
+    <div class="text-xs-center pt-2">
       <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
     </div>
     <v-snackbar v-model="snackbar" :color="color" :timeout="timeout" top>
@@ -669,7 +679,7 @@ export default {
     status: '',
     color: '',
     timeout: 2000,
-    date_of_joining: '', 
+    date_of_joining: '',
     menu: false,
     menu2: false,
     student_name: '',
@@ -710,8 +720,7 @@ export default {
       if (!this.$v.student_name.$dirty) return errors
       !this.$v.student_name.minLength &&
         errors.push('Name seems to be very short')
-      !this.$v.student_name.required &&
-        errors.push('Please enter student name')
+      !this.$v.student_name.required && errors.push('Please enter student name')
       return errors
     },
     batchNoErrors() {
@@ -721,8 +730,7 @@ export default {
         errors.push('Batch Number seems to be very short')
       !this.$v.batch_no.alphaNum &&
         errors.push('No special characters allowed !')
-      !this.$v.batch_no.required &&
-        errors.push('Please enter batch number')
+      !this.$v.batch_no.required && errors.push('Please enter batch number')
       return errors
     },
     roleNoErrors() {
@@ -730,8 +738,7 @@ export default {
       if (!this.$v.role_no.$dirty) return errors
       !this.$v.role_no.minLength &&
         errors.push('Role Number seems to be very short')
-      !this.$v.role_no.required &&
-        errors.push('Please enter role number')
+      !this.$v.role_no.required && errors.push('Please enter role number')
       !this.$v.role_no.alphaNum &&
         errors.push('No special characters allowed !')
       return errors
@@ -746,19 +753,15 @@ export default {
     genderErrors() {
       const errors = []
       if (!this.$v.gender.$dirty) return errors
-      !this.$v.gender.required &&
-        errors.push('Please enter role number')
+      !this.$v.gender.required && errors.push('Please enter role number')
       return errors
     },
     mediumErrors() {
       const errors = []
       if (!this.$v.medium.$dirty) return errors
-      !this.$v.medium.minLength &&
-        errors.push('Medium seems to be very short')
-      !this.$v.medium.required &&
-        errors.push('Please enter medium')
-      !this.$v.medium.alpha &&
-        errors.push('No special characters allowed !')
+      !this.$v.medium.minLength && errors.push('Medium seems to be very short')
+      !this.$v.medium.required && errors.push('Please enter medium')
+      !this.$v.medium.alpha && errors.push('No special characters allowed !')
       return errors
     },
     fatherNameErrors() {
@@ -766,8 +769,7 @@ export default {
       if (!this.$v.father_name.$dirty) return errors
       !this.$v.father_name.minLength &&
         errors.push('Father Name seems to be very short')
-      !this.$v.father_name.required &&
-        errors.push('Please enter father name')
+      !this.$v.father_name.required && errors.push('Please enter father name')
       return errors
     },
     fatherOccupationErrors() {
@@ -795,8 +797,7 @@ export default {
       if (!this.$v.mother_name.$dirty) return errors
       !this.$v.mother_name.minLength &&
         errors.push('Mother Name seems to be very short')
-      !this.$v.mother_name.required &&
-        errors.push('Please enter mother name')
+      !this.$v.mother_name.required && errors.push('Please enter mother name')
       return errors
     },
     motherOccupationErrors() {
@@ -842,8 +843,7 @@ export default {
       if (!this.$v.student_area.$dirty) return errors
       !this.$v.student_area.minLength &&
         errors.push('Student area seems to be very short')
-      !this.$v.student_area.required &&
-        errors.push('Please enter student area')
+      !this.$v.student_area.required && errors.push('Please enter student area')
       return errors
     },
     studentCityErrors() {
@@ -851,8 +851,7 @@ export default {
       if (!this.$v.student_city.$dirty) return errors
       !this.$v.student_city.minLength &&
         errors.push('Student City seems to be very short')
-      !this.$v.student_city.required &&
-        errors.push('Please enter student city')
+      !this.$v.student_city.required && errors.push('Please enter student city')
       return errors
     },
     noOfSiblingsErrors() {
@@ -908,100 +907,99 @@ export default {
     menu(val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     }
-  }, 
+  },
   methods: {
     save() {
+      if (
+        !this.$v.student_name.$invalid &&
+        !this.$v.batch_no.$invalid &&
+        !this.$v.role_no.$invalid &&
+        !this.$v.date_of_joining.$invalid &&
+        !this.$v.gender.$invalid &&
+        !this.$v.medium.$invalid &&
+        !this.$v.father_name.$invalid &&
+        !this.$v.father_occupation.$invalid &&
+        !this.$v.father_phone_number.$invalid &&
+        !this.$v.mother_name.$invalid &&
+        !this.$v.mother_occupation.$invalid &&
+        !this.$v.mother_phone_number.$invalid &&
+        !this.$v.student_address.$invalid &&
+        !this.$v.student_locality.$invalid &&
+        !this.$v.student_area.$invalid &&
+        !this.$v.student_city.$invalid &&
+        !this.$v.no_of_siblings.$invalid &&
+        !this.$v.student_shoe_size.$invalid &&
+        !this.$v.student_shirt_size.$invalid
+      ) {
+        this.$store.dispatch('addStudent', {
+          name: this.student_name,
+          batch_no: this.batch_no,
+          role_no: this.role_no,
+          date_of_joining: this.date_of_joining,
+          gender: this.gender,
+          medium: this.medium,
+          father_name: this.father_name,
+          father_occupation: this.father_occupation,
+          father_phone_number: this.father_phone_number,
+          mother_name: this.mother_name,
+          mother_occupation: this.mother_occupation,
+          mother_phone_number: this.mother_phone_number,
+          address: this.student_address,
+          locality: this.student_locality,
+          area: this.student_area,
+          city: this.student_city,
+          no_of_siblings: this.no_of_siblings,
+          shoe_size: this.student_shoe_size,
+          shirt_size: this.student_shirt_size,
+          status: 'active',
+          created_at: new Date()
+        })
 
-      if (!this.$v.student_name.$invalid &&
-          !this.$v.batch_no.$invalid &&
-          !this.$v.role_no.$invalid &&
-          !this.$v.date_of_joining.$invalid &&
-          !this.$v.gender.$invalid &&
-          !this.$v.medium.$invalid &&
-          !this.$v.father_name.$invalid &&
-          !this.$v.father_occupation.$invalid &&
-          !this.$v.father_phone_number.$invalid &&
-          !this.$v.mother_name.$invalid &&
-          !this.$v.mother_occupation.$invalid &&
-          !this.$v.mother_phone_number.$invalid &&
-          !this.$v.student_address.$invalid &&
-          !this.$v.student_locality.$invalid &&
-          !this.$v.student_area.$invalid &&
-          !this.$v.student_city.$invalid &&
-          !this.$v.no_of_siblings.$invalid &&
-          !this.$v.student_shoe_size.$invalid &&
-          !this.$v.student_shirt_size.$invalid) {
+        this.addDialog = false
 
-          this.$store.dispatch('addStudent', {
-            name: this.student_name,
-            batch_no: this.batch_no,
-            role_no: this.role_no,
-            date_of_joining: this.date_of_joining,
-            gender: this.gender,
-            medium: this.medium,
-            father_name: this.father_name,
-            father_occupation: this.father_occupation,
-            father_phone_number: this.father_phone_number,
-            mother_name: this.mother_name,
-            mother_occupation: this.mother_occupation,
-            mother_phone_number: this.mother_phone_number,
-            address: this.student_address,
-            locality: this.student_locality,
-            area: this.student_area,
-            city: this.student_city,
-            no_of_siblings: this.no_of_siblings,
-            shoe_size: this.student_shoe_size,
-            shirt_size: this.student_shirt_size,
-            status: 'active',
-            created_at: new Date()
-          })
+        this.student_name = ''
+        this.batch_no = ''
+        this.role_no = ''
+        this.date_of_joining
+        this.gender = ''
+        this.medium = ''
+        this.father_name = ''
+        this.father_occupation = ''
+        this.father_phone_number = ''
+        this.mother_name = ''
+        this.mother_occupation = ''
+        this.mother_phone_number = ''
+        this.student_address = ''
+        this.student_locality = ''
+        this.student_area = ''
+        this.student_city = ''
+        this.no_of_siblings = ''
+        this.student_shoe_size = ''
+        this.student_shirt_size = ''
 
-          this.addDialog = false;
-
-            this.student_name  = '';
-            this.batch_no  = '';
-            this.role_no  = '';
-            this.date_of_joining;
-            this.gender  = '';
-            this.medium  = '';
-            this.father_name  = '';
-            this.father_occupation  = '';
-            this.father_phone_number  = '';
-            this.mother_name  = '';
-            this.mother_occupation  = '';
-            this.mother_phone_number  = '';
-            this.student_address  = '';
-            this.student_locality  = '';
-            this.student_area  = '';
-            this.student_city  = '';
-            this.no_of_siblings  = '';
-            this.student_shoe_size  = '';
-            this.student_shirt_size = ''
-
-          setTimeout(() => {
-            this.$store.dispatch('getStudents')
-          }, 700);
-
+        setTimeout(() => {
+          this.$store.dispatch('getStudents')
+        }, 700)
       } else if (
-          this.$v.student_name.$invalid &&
-          this.$v.batch_no.$invalid &&
-          this.$v.role_no.$invalid &&
-          this.$v.date_of_joining.$invalid &&
-          this.$v.gender.$invalid &&
-          this.$v.medium.$invalid &&
-          this.$v.father_name.$invalid &&
-          this.$v.father_occupation.$invalid &&
-          this.$v.father_phone_number.$invalid &&
-          this.$v.mother_name.$invalid &&
-          this.$v.mother_occupation.$invalid &&
-          this.$v.mother_phone_number.$invalid &&
-          this.$v.student_address.$invalid &&
-          this.$v.student_locality.$invalid &&
-          this.$v.student_area.$invalid &&
-          this.$v.student_city.$invalid &&
-          this.$v.no_of_siblings.$invalid &&
-          this.$v.student_shoe_size.$invalid &&
-          this.$v.student_shirt_size.$invalid
+        this.$v.student_name.$invalid &&
+        this.$v.batch_no.$invalid &&
+        this.$v.role_no.$invalid &&
+        this.$v.date_of_joining.$invalid &&
+        this.$v.gender.$invalid &&
+        this.$v.medium.$invalid &&
+        this.$v.father_name.$invalid &&
+        this.$v.father_occupation.$invalid &&
+        this.$v.father_phone_number.$invalid &&
+        this.$v.mother_name.$invalid &&
+        this.$v.mother_occupation.$invalid &&
+        this.$v.mother_phone_number.$invalid &&
+        this.$v.student_address.$invalid &&
+        this.$v.student_locality.$invalid &&
+        this.$v.student_area.$invalid &&
+        this.$v.student_city.$invalid &&
+        this.$v.no_of_siblings.$invalid &&
+        this.$v.student_shoe_size.$invalid &&
+        this.$v.student_shirt_size.$invalid
       )
         this.addDialog = true
       {
@@ -1049,53 +1047,53 @@ export default {
       }, 700)
     },
     addClose() {
-      this.addDialog = false;
-      this.student_name  = '';
-      this.batch_no  = '';
-      this.role_no  = '';
-      this.date_of_joining = '';
-      this.gender  = '';
-      this.medium  = '';
-      this.father_name  = '';
-      this.father_occupation  = '';
-      this.father_phone_number  = '';
-      this.mother_name  = '';
-      this.mother_occupation  = '';
-      this.mother_phone_number  = '';
-      this.student_address  = '';
-      this.student_locality  = '';
-      this.student_area  = '';
-      this.student_city  = '';
-      this.no_of_siblings  = '';
-      this.student_shoe_size  = '';
+      this.addDialog = false
+      this.student_name = ''
+      this.batch_no = ''
+      this.role_no = ''
+      this.date_of_joining = ''
+      this.gender = ''
+      this.medium = ''
+      this.father_name = ''
+      this.father_occupation = ''
+      this.father_phone_number = ''
+      this.mother_name = ''
+      this.mother_occupation = ''
+      this.mother_phone_number = ''
+      this.student_address = ''
+      this.student_locality = ''
+      this.student_area = ''
+      this.student_city = ''
+      this.no_of_siblings = ''
+      this.student_shoe_size = ''
       this.student_shirt_size = ''
-      this.$v.$reset();
+      this.$v.$reset()
     },
     editClose() {
-      this.editDialog = false;
-      this.student_name  = '';
-      this.batch_no  = '';
-      this.role_no  = '';
-      this.date_of_joining = '';
-      this.gender  = '';
-      this.medium  = '';
-      this.father_name  = '';
-      this.father_occupation  = '';
-      this.father_phone_number  = '';
-      this.mother_name  = '';
-      this.mother_occupation  = '';
-      this.mother_phone_number  = '';
-      this.student_address  = '';
-      this.student_locality  = '';
-      this.student_area  = '';
-      this.student_city  = '';
-      this.no_of_siblings  = '';
-      this.student_shoe_size  = '';
+      this.editDialog = false
+      this.student_name = ''
+      this.batch_no = ''
+      this.role_no = ''
+      this.date_of_joining = ''
+      this.gender = ''
+      this.medium = ''
+      this.father_name = ''
+      this.father_occupation = ''
+      this.father_phone_number = ''
+      this.mother_name = ''
+      this.mother_occupation = ''
+      this.mother_phone_number = ''
+      this.student_address = ''
+      this.student_locality = ''
+      this.student_area = ''
+      this.student_city = ''
+      this.no_of_siblings = ''
+      this.student_shoe_size = ''
       this.student_shirt_size = ''
-      this.$v.$reset();
+      this.$v.$reset()
     },
     deleteItem(item) {
-        confirm('Are you sure you want to delete this item?') &&
+      confirm('Are you sure you want to delete this item?') &&
         this.$store.dispatch('removeStudent', {
           id: item.id,
           name: item.name,
@@ -1119,12 +1117,12 @@ export default {
           shirt_size: item.shirt_size,
           status: 'inactive',
           deleted_at: new Date()
-        });
+        })
 
-        this.snackbar = true
-        this.color = 'success darken-4'
-        window.navigator.vibrate(200)
-        this.status = 'Item deleted successfully'
+      this.snackbar = true
+      this.color = 'success darken-4'
+      window.navigator.vibrate(200)
+      this.status = 'Item deleted successfully'
 
       setTimeout(() => {
         this.$store.dispatch('getStudents')
@@ -1134,7 +1132,7 @@ export default {
       this.$refs.menu.save(date_of_joining)
     },
     saveupdatedate(date_of_joining) {
-      this.$refs.menu.save(date_of_joining);
+      this.$refs.menu.save(date_of_joining)
     },
     refreshData() {
       this.$store.dispatch('getStudents')

@@ -69,6 +69,7 @@
                           v-model="menu"
                           :close-on-content-click="false"
                           :nudge-right="40"
+                          :return-value.sync="assessmentdate"
                           lazy
                           transition="scale-transition"
                           offset-y
@@ -78,20 +79,17 @@
                           <template v-slot:activator="{ on }">
                             <v-text-field
                               v-model="assessmentdate"
-                              :error-messages="assessmentDateErrors"
-                              placeholder="Assessment date"
+                              label="Picker in menu"
                               prepend-icon="event"
                               readonly
                               v-on="on"
                             ></v-text-field>
                           </template>
-                          <v-date-picker
-                            ref="picker"
-                            v-model="assessmentdate"
-                            :max="new Date().toISOString().substr(0, 10)"
-                            min="1950-01-01"
-                            @change="savedate"
-                          ></v-date-picker>
+                          <v-date-picker v-model="assessmentdate" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                            <v-btn flat color="primary" @click="$refs.menu.save(assessmentdate)">OK</v-btn>
+                          </v-date-picker>
                         </v-menu>
                       </v-flex>
                     </v-layout>
@@ -118,7 +116,7 @@
 
       <v-dialog lazy origin persistent v-model="editDialog" max-width="500px">
         <v-card>
-          <v-form novalidate="novalidate" class="form" @submit.prevent="save">
+          <v-form novalidate="novalidate" class="form" @submit.prevent="update">
             <v-card-text>
               <v-card-title>
                 <span class="headline">Edit Student Assessment</span>
@@ -127,39 +125,30 @@
                 <v-layout wrap>
                   <v-flex xs12 sm12 md12>
                     <v-autocomplete
-                      v-model="student"
-                      :items="studentitems"
-                      :error-messages="studentErrors"
-                      :search-input.sync="searchStudent"
-                      hide-no-data
-                      hide-selected
-                      item-text="Studentname"
-                      placeholder="Please select student"
-                      return-object
+                      :items="studentnames"
+                      :filter="customFilter"
+                      color="blue"
+                      item-text="name"
+                      v-model="studentassessment.student"
+                      label="Student"
                     ></v-autocomplete>
 
                     <v-autocomplete
+                      :items="assessnames"
+                      :filter="customFilter"
+                      color="blue"
+                      item-text="name"
                       v-model="studentassessment.assessment"
-                      :items="assessmentitems"
-                      :error-messages="assessmentErrors"
-                      :search-input.sync="searchAssessment"
-                      hide-no-data
-                      hide-selected
-                      item-text="Assessmentname"
-                      placeholder="Please select assessment"
-                      return-object
+                      label="Assessment"
                     ></v-autocomplete>
 
                     <v-autocomplete
+                      :items="volnames"
+                      :filter="customFilter"
+                      color="blue"
+                      item-text="name"
                       v-model="studentassessment.volunteer"
-                      :items="volunteeritems"
-                      :error-messages="volunteerErrors"
-                      :search-input.sync="searchVolunteer"
-                      hide-no-data
-                      hide-selected
-                      item-text="Volunteername"
-                      placeholder="Please select volunteer"
-                      return-object
+                      label="Volunteer"
                     ></v-autocomplete>
 
                     <v-layout wrap>
@@ -173,10 +162,11 @@
 
                       <v-flex xs12 sm6 md6>
                         <v-menu
-                          ref="menu"
-                          v-model="menu"
+                          ref="menu1"
+                          v-model="menu1"
                           :close-on-content-click="false"
                           :nudge-right="40"
+                          :return-value.sync="studentassessment_assessment_date"
                           lazy
                           transition="scale-transition"
                           offset-y
@@ -185,21 +175,26 @@
                         >
                           <template v-slot:activator="{ on }">
                             <v-text-field
-                              v-model="studentassessment.assessmentdate"
-                              :error-messages="assessmentDateErrors"
-                              placeholder="Assessment date"
+                              v-model="studentassessment_assessment_date"
+                              label="Picker in menu"
                               prepend-icon="event"
                               readonly
                               v-on="on"
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            ref="picker"
-                            v-model="studentassessment.assessmentdate"
-                            :max="new Date().toISOString().substr(0, 10)"
-                            min="1950-01-01"
-                            @change="savedate"
-                          ></v-date-picker>
+                            v-model="studentassessment_assessment_date"
+                            no-title
+                            scrollable
+                          >
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="menu1 = false">Cancel</v-btn>
+                            <v-btn
+                              flat
+                              color="primary"
+                              @click="$refs.menu1.save(studentassessment_assessment_date)"
+                            >OK</v-btn>
+                          </v-date-picker>
                         </v-menu>
                       </v-flex>
                     </v-layout>
@@ -223,34 +218,50 @@
           </v-form>
         </v-card>
       </v-dialog>
-
     </v-toolbar>
-
-    <v-data-table :headers="headers" :items="studentassessments" class="elevation-1">
-      <template v-slot:items="props">
-        <td>{{ props.item.student }}</td>
-        <td>{{ props.item.assessment }}</td>
-        <td>{{ props.item.volunteer }}</td>
-        <td>{{ props.item.score }}</td>
-        <td>{{ props.item.assessment_date | moment("DD / MM / YYYY") }}</td>
-        <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
-        <td v-if="props.item.updated_at == null"></td>
-        <td v-if="props.item.updated_at != null">{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
-          <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
-        </td>
-      </template>
-    </v-data-table>
-
+    <v-card>
+      <v-card-title>
+        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+        <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
+          <v-icon dark>refresh</v-icon>
+        </v-btn>
+      </v-card-title>
+      <v-data-table
+        :headers="headers"
+        :search="search"
+        hide-actions
+        :pagination.sync="pagination"
+        :items="studentassessments"
+        class="elevation-1"
+      >
+        <template v-slot:items="props">
+          <td>{{ props.item.student }}</td>
+          <td>{{ props.item.assessment }}</td>
+          <td>{{ props.item.volunteer }}</td>
+          <td>{{ props.item.score }}</td>
+          <td>{{ props.item.assessment_date | moment("DD / MM / YYYY") }}</td>
+          <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
+          <td v-if="props.item.updated_at == null"></td>
+          <td
+            v-if="props.item.updated_at != null"
+          >{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
+          <td class="justify-center layout px-0">
+            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+            <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
+          </td>
+        </template>
+      </v-data-table>
+    </v-card>
+    <div class="text-xs-center pt-2">
+      <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
+    </div>
     <v-snackbar v-model="snackbar" :color="color" :timeout="timeout" top>
       {{ this.status
       }}
-      <v-icon dark size="15" @click="snackbar = false">fas fa-times fa-xs</v-icon>
+      <v-icon dark size="10" @click="snackbar = false">fas fa-times fa-xs</v-icon>
     </v-snackbar>
   </div>
 </template>
-
 
 <script>
 import { validationMixin } from 'vuelidate'
@@ -288,6 +299,8 @@ export default {
     status: '',
     color: '',
     timeout: 6000,
+    pagination: {},
+    search: '',
     student: null,
     searchStudent: null,
     assessment: null,
@@ -296,11 +309,13 @@ export default {
     score: '',
     assessmentdate: null,
     menu: false,
+    menu1: false,
     searchVolunteer: null,
     addDialog: false,
     editDialog: false,
     loader: null,
     loading: false,
+    studentassessment_assessment_date: null,
     headers: [
       { text: 'Student Name', value: 'studentname' },
       { text: 'Assessment', value: 'assessmentname' },
@@ -363,6 +378,9 @@ export default {
     assessnames() {
       return this.$store.state.assessmentnames
     },
+    assessmentId() {
+      return this.$store.state.assessmentid
+    },
     volunteeritems() {
       return this.volnames.map(entry => {
         const Volunteername = entry.name
@@ -372,11 +390,26 @@ export default {
     volnames() {
       return this.$store.state.volunteernames
     },
+    volunteerId() {
+      return this.$store.state.volunteerid
+    },
     studentassessments() {
       return this.$store.state.student_assessments
     },
     studentassessment() {
       return this.$store.state.student_assessment
+    },
+    studentId() {
+      return this.$store.state.studentid
+    },
+    pages() {
+      if (
+        this.pagination.rowsPerPage == null ||
+        this.pagination.totalItems == null
+      )
+        return 0
+
+      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     }
   },
   methods: {
@@ -416,11 +449,77 @@ export default {
         this.$v.$touch()
       }
     },
+    formatDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear()
+
+      if (month.length < 2) month = '0' + month
+      if (day.length < 2) day = '0' + day
+
+      return [year, month, day].join('-')
+    },
     editItem(item) {
       this.$store.dispatch('getStudentAssessment', {
-        id: item
+        id: item.id
       })
-      this.editDialog = true
+      ;(this.editDialog = true),
+        this.$store.dispatch('getStudentIDByName', {
+          name: item.student
+        })
+
+      this.$store.dispatch('getAssessmentIDByName', {
+        name: item.assessment
+      })
+
+      this.$store.dispatch('getVolunteerIDByName', {
+        name: item.volunteer
+      })
+
+      this.studentassessment_assessment_date = this.formatDate(
+        new Date(item.assessment_date)
+      )
+      console.log(this.studentassessment.assessment_date)
+      this.$store.dispatch('getStudentNames')
+      this.$store.dispatch('getAssessmentNames')
+      this.$store.dispatch('getVolunteerNames')
+    },
+    update() {
+      this.$store.dispatch('getStudentIDByName', {
+        name: this.studentassessment.student
+      })
+
+      this.$store.dispatch('getAssessmentIDByName', {
+        name: this.studentassessment.assessment
+      })
+
+      this.$store.dispatch('getVolunteerIDByName', {
+        name: this.studentassessment.volunteer
+      })
+
+      if (this.studentassessment.score > this.assessmentId[0].total_score) {
+        this.snackbar = true
+        this.color = 'red darken-4'
+        window.navigator.vibrate(200)
+        this.status = 'Entered score is greater than Assessment Score !'
+      }
+
+      setTimeout(() => {
+        this.$store.dispatch('updateStudentAssessment', {
+          id: this.studentassessment.id,
+          student_id: this.studentId[0].id,
+          assessment_id: this.assessmentId[0].id,
+          volunteer_id: this.volunteerId[0].id,
+          score: this.studentassessment.score,
+          assessment_date: this.studentassessment_assessment_date
+        })
+        this.editDialog = false
+      }, 700)
+
+      setTimeout(() => {
+        this.$store.dispatch('getStudentAssessments')
+      }, 900)
     },
     deleteItem(item) {
       confirm('Are you sure you want to delete this item?') &&
@@ -431,8 +530,13 @@ export default {
         this.$store.dispatch('getStudentAssessments')
       }, 700)
     },
-    savedate(assessmentdate) {
-      this.$refs.menu.save(assessmentdate)
+    customFilter(item, queryText, itemText) {
+      const textOne = item.name.toLowerCase()
+      const searchText = queryText.toLowerCase()
+      return textOne.indexOf(searchText) > -1
+    },
+    refreshData() {
+      this.$store.dispatch('getStudentAssessments')
     }
   },
   watch: {
@@ -447,9 +551,6 @@ export default {
     searchVolunteer(val) {
       if (this.volunteeritems.length > 0) return
       this.$store.dispatch('getVolunteerNames')
-    },
-    menu(val) {
-      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     }
   }
 }
