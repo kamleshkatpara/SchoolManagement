@@ -51,35 +51,33 @@
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
-                    <v-menu
-                      ref="menu"
-                      v-model="menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="date_of_joining"
-                          :error-messages="dojErrors"
-                          placeholder="Assessment date"
-                          prepend-icon="event"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        ref="picker"
-                        v-model="date_of_joining"
-                        :max="new Date().toISOString().substr(0, 10)"
-                        min="1950-01-01"
-                        @change="savedate"
-                      ></v-date-picker>
-                    </v-menu>
+                   <v-menu
+                          ref="menu"
+                          v-model="menu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="date_of_joining"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date_of_joining"
+                              label="Picker in menu"
+                              prepend-icon="event"
+                              readonly
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker v-model="date_of_joining" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                            <v-btn flat color="primary" @click="$refs.menu.save(deleteItem)">OK</v-btn>
+                          </v-date-picker>
+                        </v-menu>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
@@ -309,34 +307,32 @@
 
                   <v-flex xs12 sm6 md4>
                     <v-menu
-                      ref="menu"
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="date_of_joining"
-                          :error-messages="dojErrors"
-                          placeholder="Date Of Joining"
-                          prepend-icon="event"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        ref="picker"
-                        v-model="date_of_joining"
-                        :max="new Date().toISOString().substr(0, 10)"
-                        min="1950-01-01"
-                        @change="saveupdatedate"
-                      ></v-date-picker>
-                    </v-menu>
+                          ref="menu2"
+                          v-model="menu2"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="student.date_of_joining"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="student.date_of_joining"
+                              label="Picker in menu"
+                              prepend-icon="event"
+                              readonly
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker v-model="student.date_of_joining" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                            <v-btn flat color="primary" @click="$refs.menu.save(student.date_of_joining)">OK</v-btn>
+                          </v-date-picker>
+                        </v-menu>
                   </v-flex>
 
                   <v-flex xs12 sm6 md4>
@@ -909,6 +905,17 @@ export default {
     }
   },
   methods: {
+        formatDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear()
+
+      if (month.length < 2) month = '0' + month
+      if (day.length < 2) day = '0' + day
+
+      return [year, month, day].join('-')
+    },
     save() {
       if (
         !this.$v.student_name.$invalid &&
