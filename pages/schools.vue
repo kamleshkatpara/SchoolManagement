@@ -203,7 +203,8 @@ export default {
         setTimeout(() => {
           this.$store.dispatch('getSchools')
         }, 700)
-      } else if ((this.$v.schoolname.$invalid, (this.addDialog = true))) {
+      } else if (this.$v.schoolname.$invalid) {
+        this.addDialog = true;
         this.$v.$touch()
       }
     },
@@ -220,7 +221,8 @@ export default {
     editItem(item) {
       this.$store.dispatch('getSchool', {
         id: item
-      })
+      });
+      this.$v.$reset();
       this.editDialog = true
     },
 

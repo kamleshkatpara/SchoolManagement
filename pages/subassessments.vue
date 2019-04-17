@@ -5,6 +5,7 @@
       <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
     </v-toolbar>
+{{myfunction}}
 
     <v-card>
       <v-card-title>
@@ -13,8 +14,6 @@
           <v-icon dark>refresh</v-icon>
         </v-btn>
       </v-card-title>
-            {{ subjects }}
-
       <v-data-table
         :headers="headers"
         :search="search"
@@ -24,9 +23,8 @@
         class="elevation-1"
       >
         <template v-slot:items="props">
-          <td>{{ props.item.student }}</td>
-          <td>{{ props.item.volunteer }}</td>
-          <td>{{ props.item.total }}</td>
+           <td v-for="(header, key) in headers" :key="key">
+            {{ props.item[header.value] }}</td>
         </template>
       </v-data-table>
     </v-card>
@@ -48,17 +46,21 @@ export default {
     pagination: {},
     search: '',
     headers:  [
-          {
-            text: 'Student', value: 'student'
-          },
-          { text: 'Volunteer', value: 'volunteer' },
-
+          { text: 'Student', value: 'student'},
+          { text: 'Volunteer', value: 'volunteer'},
+          { text: 'English', value: 'English'},
+          { text: 'Science', value: 'Science'},
           { text: 'Total Score', value: 'total' }
         ]
   }),
   computed: {
     studentreports() {
       return this.$store.state.studentreports
+    },
+    myfunction() {
+      this.studentreports.forEach(element => {
+        console.log(element)
+      });
     },
     pages() {
       if (

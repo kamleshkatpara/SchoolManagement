@@ -221,8 +221,12 @@ export const actions = {
   async getSchools({
     commit
   }) {
-    const data = await this.$axios.$get(`${process.env.apiURL}/Schools`)
-    commit('setSchools', data)
+    try {
+      const data = await this.$axios.$get(`${process.env.apiURL}/Schools`)
+      commit('setSchools', data)
+    } catch(err) {
+      console.log(err)
+    }
   },
 
   async getSchool({
@@ -230,8 +234,12 @@ export const actions = {
   }, {
     id
   }) {
-    const data = await this.$axios.$get(`${process.env.apiURL}/Schools/${id}`)
-    commit('setSchool', data)
+    try{ 
+      const data = await this.$axios.$get(`${process.env.apiURL}/Schools/${id}`)
+      commit('setSchool', data)
+    } catch(err) {
+      console.log(err)
+    }
   },
 
   async updateSchool({
@@ -241,11 +249,15 @@ export const actions = {
     name,
     updated_at
   }) {
-    const data = await this.$axios.$put(`${process.env.apiURL}/Schools/${id}`, {
-      name: name,
-      updated_at: updated_at
-    })
-    commit('setSchool', data)
+    try{
+        const data = await this.$axios.$put(`${process.env.apiURL}/Schools/${id}`, {
+          name: name,
+          updated_at: updated_at
+        })
+        commit('setSchool', data)
+     } catch(err) {
+      console.log(err)
+    }
   },
 
   async removeSchool({
@@ -253,8 +265,11 @@ export const actions = {
   }, {
     id
   }) {
-    const data = await this.$axios.$delete(`${process.env.apiURL}/Schools/${id}`)
-    console.log(data)
+    try {
+      const data = await this.$axios.$delete(`${process.env.apiURL}/Schools/${id}`)
+    } catch(err) {
+      console.log(err)
+    }
   },
 
   // Student Operations from here
