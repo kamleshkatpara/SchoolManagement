@@ -5,17 +5,17 @@
       <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
     </v-toolbar>
-{{myfunction}}
 
     <v-card>
       <v-card-title>
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details>s
+        </v-text-field>
         <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
           <v-icon dark>refresh</v-icon>
         </v-btn>
       </v-card-title>
       <v-data-table
-        :headers="headers"
+        :headers="myheader"
         :search="search"
         hide-actions
         :pagination.sync="pagination"
@@ -23,8 +23,7 @@
         class="elevation-1"
       >
         <template v-slot:items="props">
-           <td v-for="(header, key) in headers" :key="key">
-            {{ props.item[header.value] }}</td>
+          <td v-for="(header, key) in myheader" :key="key">{{ props.item[header.value] }}</td>
         </template>
       </v-data-table>
     </v-card>
@@ -35,7 +34,6 @@
 </template>
 
 <script>
-import uniqBy from 'lodash/uniqBy'
 
 export default {
   async fetch({ store }) {
@@ -44,23 +42,44 @@ export default {
   middleware: 'auth',
   data: () => ({
     pagination: {},
-    search: '',
-    headers:  [
-          { text: 'Student', value: 'student'},
-          { text: 'Volunteer', value: 'volunteer'},
-          { text: 'English', value: 'English'},
-          { text: 'Science', value: 'Science'},
-          { text: 'Total Score', value: 'total' }
-        ]
+    search: ''
   }),
   computed: {
     studentreports() {
       return this.$store.state.studentreports
     },
-    myfunction() {
-      this.studentreports.forEach(element => {
-        console.log(element)
-      });
+    myheader() {
+      var headers = this.studentreports.map((item, i) => {
+        return Object.keys(item)
+      })
+
+      function flatten(input) {
+        const stack = [...input]
+        const res = []
+        while (stack.length) {
+          // pop value from stack
+          const next = stack.pop()
+          if (Array.isArray(next)) {
+            // push back array items, won't modify the original input
+            stack.push(...next)
+          } else {
+            res.push(next)
+          }
+        }
+        console.log(res)
+        //reverse to restore input order
+        return res.reverse()
+      }
+      var flatHeader = flatten(headers)
+      var uniqueHeaders = flatHeader.filter(
+        (x, index) => index === flatHeader.indexOf(x)
+      )
+
+      var x = uniqueHeaders.map(x => {
+        return { text: x, value: x }
+      })
+
+      return x
     },
     pages() {
       if (
