@@ -7,7 +7,9 @@
 
       <v-dialog v-model="addDialog" lazy origin persistent max-width="500px">
         <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+          <v-btn color="primary" dark class="mb-2" v-on="on" 
+          v-if="studentnames.length != 0 && volnames.length != 0 && assessnames.length != 0">
+            New Item</v-btn>
         </template>
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="save">
@@ -122,7 +124,7 @@
                 <v-btn
                   color="blue darken-1"
                   flat
-                  @click="addDialog = !addDialog"
+                  @click="closeAdd"
                   >Cancel</v-btn
                 >
               </v-card-actions>
@@ -240,7 +242,7 @@
                 <v-btn
                   color="blue darken-1"
                   flat
-                  @click="editDialog = !editDialog"
+                  @click="closeEdit"
                   >Cancel</v-btn
                 >
               </v-card-actions>
@@ -269,7 +271,7 @@
           <v-icon dark>refresh</v-icon>
         </v-btn>
       </v-card-title>
-      <v-data-table
+      <v-data-table 
         :headers="headers"
         :search="search"
         hide-actions
@@ -277,7 +279,7 @@
         :items="studentassessments"
         class="elevation-1"
       >
-        <template v-slot:items="props">
+        <template v-slot:items="props" v-if="studentnames.length != 0">
           <td>{{ props.item.student }}</td>
           <td>{{ props.item.assessment }}</td>
           <td>{{ props.item.volunteer }}</td>
@@ -469,7 +471,10 @@ export default {
     }
   },
   async fetch({ store }) {
-    await store.dispatch('getStudentAssessments')
+    await store.dispatch('getStudentAssessments');
+    await store.dispatch('getStudentNames');
+    await store.dispatch('getAssessmentNames');
+    await store.dispatch('getVolunteerNames');
   },
   middleware: 'auth',
   methods: {
@@ -495,7 +500,14 @@ export default {
             assessment_date: this.assessmentdate,
             created_at: new Date()
           })
-          this.addDialog = false
+
+          this.addDialog = false;
+          this.student = '';
+          this.assessment = '';
+          this.volunteer = '';
+          this.score = '';
+          this.assessmentdate = '';
+
           setTimeout(() => {
             this.$store.dispatch('getStudentAssessments')
           }, 700)
@@ -509,6 +521,22 @@ export default {
       ) {
         this.$v.$touch()
       }
+    },
+    closeAdd() {
+      this.addDialog = false;
+      this.student = '';
+      this.assessment = '';
+      this.volunteer = '';
+      this.score = '';
+      this.assessmentdate = '';
+    },
+    closeEdit() {
+      this.editDialog = false;
+      this.student = '';
+      this.assessment = '';
+      this.volunteer = '';
+      this.score = '';
+      this.assessmentdate = '';
     },
     formatDate(date) {
       const d = new Date(date)
@@ -599,7 +627,10 @@ export default {
       return textOne.indexOf(searchText) > -1
     },
     refreshData() {
-      this.$store.dispatch('getStudentAssessments')
+      this.$store.dispatch('getStudentAssessments');
+      this.$store.dispatch('getStudentNames');
+      this.$store.dispatch('getAssessmentNames');
+      this.$store.dispatch('getVolunteerNames');
     }
   }
 }

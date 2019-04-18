@@ -327,7 +327,7 @@ export const actions = {
     const data = await this.$axios.$get(
       `${
         process.env.apiURL
-      }/Students?filter[where][name]=${name}&filter[fields][id]=true`
+      }/Students?filter[where][name]=${name}&filter[fields][id]=true&filter[where][status]=active`
     )
     commit('setStudentID', data)
   },
@@ -336,7 +336,7 @@ export const actions = {
     const data = await this.$axios.$get(
       `${
         process.env.apiURL
-      }/Students?filter[fields][id]=true&filter[fields][name]=true`
+      }/Students?filter[fields][id]=true&filter[fields][name]=true&filter[where][status]=active`
     )
     commit('setStudentNames', data)
   },
@@ -681,7 +681,7 @@ export const actions = {
 
   async getStudentReports({ commit }) {
     const data = await this.$axios.get(
-      `${process.env.apiURL}/studentAssessments/getStudentAssessments`
+      `${process.env.apiURL}/Student_Assessments/getStudentAssessments`
     )
     commit('setStudentReports', data.data)
   }
