@@ -2,8 +2,14 @@
   <v-content>
     <v-container fluid fill-height>
       <v-layout align-center justify-center>
-        <v-flex v-if="$store.state.authUser">Hello {{ $store.state.authUser.user.username.charAt(0).toUpperCase() + $store.state.authUser.user.username.slice(1) }}</v-flex>
-        <v-flex xs12 sm8 md4 v-else>
+        <v-flex v-if="$store.state.authUser"
+          >Hello
+          {{
+            $store.state.authUser.user.username.charAt(0).toUpperCase() +
+              $store.state.authUser.user.username.slice(1)
+          }}</v-flex
+        >
+        <v-flex v-else xs12 sm8 md4>
           <v-card class="elevation-12">
             <v-toolbar dark color="primary">
               <v-spacer></v-spacer>
@@ -11,21 +17,25 @@
               <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-              <v-form novalidate="novalidate" class="loginform" @submit.prevent="login">
+              <v-form
+                novalidate="novalidate"
+                class="loginform"
+                @submit.prevent="login"
+              >
                 <v-text-field
+                  v-model="username"
                   prepend-icon="person"
                   name="username"
                   :error-messages="usernameErrors"
                   browser-autocomplete="off"
                   placeholder="Username"
-                  v-model="username"
                   type="text"
                   required
                 ></v-text-field>
 
                 <v-text-field
-                  prepend-icon="lock"
                   v-model="password"
+                  prepend-icon="lock"
                   :error-messages="passwordErrors"
                   :append-icon="show ? 'visibility_off' : 'visibility'"
                   :type="show ? 'text' : 'password'"
@@ -46,7 +56,8 @@
                     color="red white--text"
                     type="submit"
                     @click.native="loader = 'loading'"
-                  >Log in</v-btn>
+                    >Log in</v-btn
+                  >
                 </v-card-actions>
               </v-form>
             </v-card-text>
@@ -62,6 +73,8 @@ import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 
 export default {
+  // vuelidate form validation
+
   mixins: [validationMixin],
 
   validations: {
@@ -92,11 +105,10 @@ export default {
     }
   },
   methods: {
-   async login() {
-      console.log(this.username)
+    async login() {
       if (!this.$v.username.$invalid && !this.$v.password.$invalid) {
         this.loading = true
-       await this.$store.dispatch('login', {
+        await this.$store.dispatch('login', {
           username: this.username,
           password: this.password
         })

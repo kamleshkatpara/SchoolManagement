@@ -5,7 +5,7 @@
       <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
 
-      <v-dialog lazy origin persistent v-model="addDialog" max-width="500px">
+      <v-dialog v-model="addDialog" lazy origin persistent max-width="500px">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
         </template>
@@ -85,10 +85,21 @@
                               v-on="on"
                             ></v-text-field>
                           </template>
-                          <v-date-picker v-model="assessmentdate" no-title scrollable>
+                          <v-date-picker
+                            v-model="assessmentdate"
+                            no-title
+                            scrollable
+                          >
                             <v-spacer></v-spacer>
-                            <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-                            <v-btn flat color="primary" @click="$refs.menu.save(assessmentdate)">OK</v-btn>
+                            <v-btn flat color="primary" @click="menu = false"
+                              >Cancel</v-btn
+                            >
+                            <v-btn
+                              flat
+                              color="primary"
+                              @click="$refs.menu.save(assessmentdate)"
+                              >OK</v-btn
+                            >
                           </v-date-picker>
                         </v-menu>
                       </v-flex>
@@ -106,15 +117,21 @@
                   flat
                   type="submit"
                   @click.native="loader = 'loading'"
-                >Save</v-btn>
-                <v-btn color="blue darken-1" flat @click="addDialog = !addDialog">Cancel</v-btn>
+                  >Save</v-btn
+                >
+                <v-btn
+                  color="blue darken-1"
+                  flat
+                  @click="addDialog = !addDialog"
+                  >Cancel</v-btn
+                >
               </v-card-actions>
             </v-card-text>
           </v-form>
         </v-card>
       </v-dialog>
 
-      <v-dialog lazy origin persistent v-model="editDialog" max-width="500px">
+      <v-dialog v-model="editDialog" lazy origin persistent max-width="500px">
         <v-card>
           <v-form novalidate="novalidate" class="form" @submit.prevent="update">
             <v-card-text>
@@ -125,29 +142,29 @@
                 <v-layout wrap>
                   <v-flex xs12 sm12 md12>
                     <v-autocomplete
+                      v-model="studentassessment.student"
                       :items="studentnames"
                       :filter="customFilter"
                       color="blue"
                       item-text="name"
-                      v-model="studentassessment.student"
                       label="Student"
                     ></v-autocomplete>
 
                     <v-autocomplete
+                      v-model="studentassessment.assessment"
                       :items="assessnames"
                       :filter="customFilter"
                       color="blue"
                       item-text="name"
-                      v-model="studentassessment.assessment"
                       label="Assessment"
                     ></v-autocomplete>
 
                     <v-autocomplete
+                      v-model="studentassessment.volunteer"
                       :items="volnames"
                       :filter="customFilter"
                       color="blue"
                       item-text="name"
-                      v-model="studentassessment.volunteer"
                       label="Volunteer"
                     ></v-autocomplete>
 
@@ -188,12 +205,19 @@
                             scrollable
                           >
                             <v-spacer></v-spacer>
-                            <v-btn flat color="primary" @click="menu1 = false">Cancel</v-btn>
+                            <v-btn flat color="primary" @click="menu1 = false"
+                              >Cancel</v-btn
+                            >
                             <v-btn
                               flat
                               color="primary"
-                              @click="$refs.menu1.save(studentassessment_assessment_date)"
-                            >OK</v-btn>
+                              @click="
+                                $refs.menu1.save(
+                                  studentassessment_assessment_date
+                                )
+                              "
+                              >OK</v-btn
+                            >
                           </v-date-picker>
                         </v-menu>
                       </v-flex>
@@ -211,8 +235,14 @@
                   flat
                   type="submit"
                   @click.native="loader = 'loading'"
-                >Update</v-btn>
-                <v-btn color="blue darken-1" flat @click="editDialog = !editDialog">Cancel</v-btn>
+                  >Update</v-btn
+                >
+                <v-btn
+                  color="blue darken-1"
+                  flat
+                  @click="editDialog = !editDialog"
+                  >Cancel</v-btn
+                >
               </v-card-actions>
             </v-card-text>
           </v-form>
@@ -221,8 +251,21 @@
     </v-toolbar>
     <v-card>
       <v-card-title>
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-        <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-btn
+          fab
+          dark
+          small
+          color="green"
+          title="refresh data"
+          @click="refreshData"
+        >
           <v-icon dark>refresh</v-icon>
         </v-btn>
       </v-card-title>
@@ -239,14 +282,16 @@
           <td>{{ props.item.assessment }}</td>
           <td>{{ props.item.volunteer }}</td>
           <td>{{ props.item.score }}</td>
-          <td>{{ props.item.assessment_date | moment("DD / MM / YYYY") }}</td>
-          <td>{{ props.item.created_at | moment("DD / MM / YYYY") }}</td>
+          <td>{{ props.item.assessment_date | moment('DD / MM / YYYY') }}</td>
+          <td>{{ props.item.created_at | moment('DD / MM / YYYY') }}</td>
           <td v-if="props.item.updated_at == null"></td>
-          <td
-            v-if="props.item.updated_at != null"
-          >{{ props.item.updated_at | moment("DD / MM / YYYY") }}</td>
+          <td v-if="props.item.updated_at != null">
+            {{ props.item.updated_at | moment('DD / MM / YYYY') }}
+          </td>
           <td class="justify-center layout px-0">
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+            <v-icon small class="mr-2" @click="editItem(props.item)"
+              >edit</v-icon
+            >
             <v-icon small @click="deleteItem(props.item.id)">delete</v-icon>
           </td>
         </template>
@@ -256,16 +301,17 @@
       <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
     </div>
     <v-snackbar v-model="snackbar" :color="color" :timeout="timeout" top>
-      {{ this.status
-      }}
-      <v-icon dark size="10" @click="snackbar = false">fas fa-times fa-xs</v-icon>
+      {{ status }}
+      <v-icon dark size="10" @click="snackbar = false"
+        >fas fa-times fa-xs</v-icon
+      >
     </v-snackbar>
   </div>
 </template>
 
 <script>
 import { validationMixin } from 'vuelidate'
-import { required, minLength, helpers } from 'vuelidate/lib/validators'
+import { required, helpers } from 'vuelidate/lib/validators'
 
 export default {
   mixins: [validationMixin],
@@ -284,14 +330,6 @@ export default {
     },
     assessmentdate: {
       required
-    }
-  },
-  async fetch({ store }) {
-    await store.dispatch('getStudentAssessments')
-  },
-  asyncData() {
-    return {
-      name: process.static ? 'static' : process.server ? 'server' : 'client'
     }
   },
   data: () => ({
@@ -327,7 +365,6 @@ export default {
       { text: 'Actions', align: 'center', value: 'id', sortable: false }
     ]
   }),
-  middleware: 'auth',
   computed: {
     studentErrors() {
       const errors = []
@@ -412,6 +449,29 @@ export default {
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     }
   },
+  watch: {
+    searchStudent(val) {
+      if (this.studentitems.length > 0) return
+      this.$store.dispatch('getStudentNames')
+    },
+    searchAssessment(val) {
+      if (this.assessmentitems.length > 0) return
+      this.$store.dispatch('getAssessmentNames')
+    },
+    searchVolunteer(val) {
+      if (this.volunteeritems.length > 0) return
+      this.$store.dispatch('getVolunteerNames')
+    }
+  },
+  asyncData() {
+    return {
+      name: process.static ? 'static' : process.server ? 'server' : 'client'
+    }
+  },
+  async fetch({ store }) {
+    await store.dispatch('getStudentAssessments')
+  },
+  middleware: 'auth',
   methods: {
     save() {
       if (
@@ -450,10 +510,10 @@ export default {
       }
     },
     formatDate(date) {
-      var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear()
+      const d = new Date(date)
+      let month = '' + (d.getMonth() + 1)
+      let day = '' + d.getDate()
+      const year = d.getFullYear()
 
       if (month.length < 2) month = '0' + month
       if (day.length < 2) day = '0' + day
@@ -464,10 +524,10 @@ export default {
       this.$store.dispatch('getStudentAssessment', {
         id: item.id
       })
-      ;(this.editDialog = true),
-        this.$store.dispatch('getStudentIDByName', {
-          name: item.student
-        })
+      this.editDialog = true
+      this.$store.dispatch('getStudentIDByName', {
+        name: item.student
+      })
 
       this.$store.dispatch('getAssessmentIDByName', {
         name: item.assessment
@@ -480,7 +540,6 @@ export default {
       this.studentassessment_assessment_date = this.formatDate(
         new Date(item.assessment_date)
       )
-      console.log(this.studentassessment.assessment_date)
       this.$store.dispatch('getStudentNames')
       this.$store.dispatch('getAssessmentNames')
       this.$store.dispatch('getVolunteerNames')
@@ -522,13 +581,14 @@ export default {
       }, 900)
     },
     deleteItem(item) {
-      confirm('Are you sure you want to delete this item?') &&
+      if(confirm('Are you sure you want to delete this item?')) {
         this.$store.dispatch('removeStudentAssessment', {
           id: item
         })
-      setTimeout(() => {
-        this.$store.dispatch('getStudentAssessments')
-      }, 700)
+        setTimeout(() => {
+          this.$store.dispatch('getStudentAssessments')
+        }, 700)
+      }
     },
     customFilter(item, queryText, itemText) {
       const textOne = item.name.toLowerCase()
@@ -537,20 +597,6 @@ export default {
     },
     refreshData() {
       this.$store.dispatch('getStudentAssessments')
-    }
-  },
-  watch: {
-    searchStudent(val) {
-      if (this.studentitems.length > 0) return
-      this.$store.dispatch('getStudentNames')
-    },
-    searchAssessment(val) {
-      if (this.assessmentitems.length > 0) return
-      this.$store.dispatch('getAssessmentNames')
-    },
-    searchVolunteer(val) {
-      if (this.volunteeritems.length > 0) return
-      this.$store.dispatch('getVolunteerNames')
     }
   }
 }

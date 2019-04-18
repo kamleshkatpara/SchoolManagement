@@ -78,25 +78,25 @@ export default {
         config.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
-          //loader: 'eslint-loader',
+          // loader: 'eslint-loader',
           exclude: /(node_modules)/
         })
       }
     }
   },
   serverMiddleware: [
-      // body-parser middleware
-      bodyParser.json(),
-      // session middleware
-      session({
-          secret: 'SMEncryption',
-          resave: false,
-          saveUninitialized: false,
-          cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 },
-          //: { secure: true }
-      }),
-      // Api middleware
-      // We add /api/login & /api/logout routes
-      '~/api'
+    // body-parser middleware
+    bodyParser.json(),
+    // session middleware
+    session({
+      secret: 'SMEncryption',
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
+      // : { secure: true }
+    }),
+    // Api middleware
+    // We add /api/login & /api/logout routes
+    '~/api'
   ]
 }

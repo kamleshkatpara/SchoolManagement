@@ -1,10 +1,11 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      v-if="$store.state.authUser"
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
-      app v-if="$store.state.authUser"
+      app
     >
       <v-list>
         <v-list-tile
@@ -24,9 +25,18 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar :clipped-left="clipped" fixed app>
-      <v-toolbar-side-icon v-if="$store.state.authUser" @click="drawer = !drawer" />
-      <v-btn v-if="$store.state.authUser" icon @click.stop="miniVariant = !miniVariant">
-        <v-icon v-if="$store.state.authUser">{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
+      <v-toolbar-side-icon
+        v-if="$store.state.authUser"
+        @click="drawer = !drawer"
+      />
+      <v-btn
+        v-if="$store.state.authUser"
+        icon
+        @click.stop="miniVariant = !miniVariant"
+      >
+        <v-icon v-if="$store.state.authUser">{{
+          `chevron_${miniVariant ? 'right' : 'left'}`
+        }}</v-icon>
       </v-btn>
       <v-btn v-if="$store.state.authUser" icon @click.stop="clipped = !clipped">
         <v-icon>web</v-icon>
@@ -37,7 +47,7 @@
       <v-spacer />
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn v-if="$store.state.authUser" icon @click.stop="logout()">
+      <v-btn title="Log Out" v-if="$store.state.authUser" icon @click.stop="logout()">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
     </v-toolbar>
@@ -104,11 +114,12 @@ export default {
   },
   methods: {
     logout() {
-      localStorage.clear();
-      sessionStorage.clear();
-      this.$store.dispatch('logout', this.$store.state.authTokenId)
-      .then(() => this.$router.go({ name: 'login' }))
-    },
+      localStorage.clear()
+      sessionStorage.clear()
+      this.$store
+        .dispatch('logout', this.$store.state.authTokenId)
+        .then(() => this.$router.go({ name: 'login' }))
+    }
   }
 }
 </script>

@@ -8,9 +8,22 @@
 
     <v-card>
       <v-card-title>
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details>s
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+          hide-details
+          >s
         </v-text-field>
-        <v-btn fab dark small color="green" title="refresh data" @click="refreshData">
+        <v-btn
+          fab
+          dark
+          small
+          color="green"
+          title="refresh data"
+          @click="refreshData"
+        >
           <v-icon dark>refresh</v-icon>
         </v-btn>
       </v-card-title>
@@ -23,7 +36,9 @@
         class="elevation-1"
       >
         <template v-slot:items="props">
-          <td v-for="(header, key) in myheader" :key="key">{{ props.item[header.value] }}</td>
+          <td v-for="(header, key) in myheader" :key="key">
+            {{ props.item[header.value] }}
+          </td>
         </template>
       </v-data-table>
     </v-card>
@@ -34,12 +49,7 @@
 </template>
 
 <script>
-
 export default {
-  async fetch({ store }) {
-    await store.dispatch('getStudentReports')
-  },
-  middleware: 'auth',
   data: () => ({
     pagination: {},
     search: ''
@@ -49,7 +59,7 @@ export default {
       return this.$store.state.studentreports
     },
     myheader() {
-      var headers = this.studentreports.map((item, i) => {
+      const headers = this.studentreports.map((item, i) => {
         return Object.keys(item)
       })
 
@@ -66,16 +76,15 @@ export default {
             res.push(next)
           }
         }
-        console.log(res)
-        //reverse to restore input order
+        // reverse to restore input order
         return res.reverse()
       }
-      var flatHeader = flatten(headers)
-      var uniqueHeaders = flatHeader.filter(
+      const flatHeader = flatten(headers)
+      const uniqueHeaders = flatHeader.filter(
         (x, index) => index === flatHeader.indexOf(x)
       )
 
-      var x = uniqueHeaders.map(x => {
+      const x = uniqueHeaders.map(x => {
         return { text: x, value: x }
       })
 
@@ -91,6 +100,10 @@ export default {
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     }
   },
+  async fetch({ store }) {
+    await store.dispatch('getStudentReports')
+  },
+  middleware: 'auth',
   methods: {
     refreshData() {
       this.$store.dispatch('getStudentReports')
