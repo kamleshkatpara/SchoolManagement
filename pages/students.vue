@@ -610,6 +610,14 @@
         >fas fa-times fa-xs</v-icon
       >
     </v-snackbar>
+ 
+     <v-snackbar v-model="studentError" :color="color" :timeout="timeout" top>
+     Duplicate Student Role Number entered..
+      <v-icon dark size="10" @click="snackbar = false"
+        >fas fa-times fa-xs</v-icon
+      >
+    </v-snackbar>
+
   </div>
 </template>
 
@@ -725,6 +733,7 @@ export default {
     student_date_of_joining: '',
     menu: false,
     menu1: false,
+    studentError: false,
     student_name: '',
     batch_no: '',
     role_no: '',
@@ -933,6 +942,9 @@ export default {
     },
     student() {
       return this.$store.state.student
+    },
+    studentError() {
+      return this.$store.state.errorMessage
     },
     pages() {
       if (
@@ -1284,6 +1296,8 @@ export default {
           shoe_size: item.shoe_size,
           shirt_size: item.shirt_size,
           status: 'inactive',
+          created_at: item.created_at,
+          updated_at: item.updated_at,
           deleted_at: new Date()
         })
 

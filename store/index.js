@@ -16,13 +16,14 @@ export const state = () => ({
   volunteer: {},
   volunteerid: {},
   studentAssessments: [],
-  student_assessment: {},
+  studentAssessment: {},
   authTokenId: '',
   authUserId: '',
   authUser: null,
   userStatus: '',
   userinfo: [],
-  studentreports: []
+  studentreports: [],
+  errorMessage: ''
 })
 
 export const getters = {
@@ -41,13 +42,14 @@ export const getters = {
   volunteerid: state => state.volunteerid,
   volunteernames: state => state.volunteernames,
   studentAssessments: state => state.studentAssessments,
-  student_assessment: state => state.student_assessment,
+  studentAssessment: state => state.studentAssessment,
   authTokenId: state => state.authTokenId,
   authUserId: state => state.authUserId,
   userStatus: state => state.userStatus,
   userinfo: state => state.userinfo,
   authUser: state => state.authUser,
-  studentreports: state => state.studentreports
+  studentreports: state => state.studentreports,
+  errorMessage: state => state.errorMessage
 }
 
 export const mutations = {
@@ -111,8 +113,8 @@ export const mutations = {
     state.studentAssessments = studentAssessments
   },
 
-  setStudentAssessment: (state, student_assessment) => {
-    state.student_assessment = student_assessment
+  setStudentAssessment: (state, studentAssessment) => {
+    state.studentAssessment = studentAssessment
   },
 
   setUserForm: (state, userform) => {
@@ -141,6 +143,10 @@ export const mutations = {
 
   setStudentReports: (state, studentreports) => {
     state.studentreports = studentreports
+  },
+
+  setError: (state, errorMessage) => {
+    state.errorMessage = errorMessage
   }
 }
 
@@ -198,7 +204,7 @@ export const actions = {
         created_at
       })
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -207,7 +213,7 @@ export const actions = {
       const data = await this.$axios.$get(`${process.env.apiURL}/Schools`)
       commit('setSchools', data)
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -216,7 +222,7 @@ export const actions = {
       const data = await this.$axios.$get(`${process.env.apiURL}/Schools/${id}`)
       commit('setSchool', data)
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -232,7 +238,7 @@ export const actions = {
       )
       commit('setSchool', data)
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -242,7 +248,7 @@ export const actions = {
         `${process.env.apiURL}/Schools/${id}`
       )
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -299,7 +305,7 @@ export const actions = {
         created_at
       })
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -417,6 +423,8 @@ export const actions = {
       shoe_size,
       shirt_size,
       status,
+      created_at,
+      updated_at,
       deleted_at
     }
   ) {
@@ -443,6 +451,8 @@ export const actions = {
         shoe_size,
         shirt_size,
         status,
+        created_at,
+        updated_at,
         deleted_at
       }
     )
@@ -466,7 +476,7 @@ export const actions = {
         }
       )
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -539,7 +549,7 @@ export const actions = {
         created_at
       })
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
@@ -606,7 +616,7 @@ export const actions = {
   ) {
     try {
       const data = await this.$axios.$post(
-        `${process.env.apiURL}/studentAssessments`,
+        `${process.env.apiURL}/Student_Assessments`,
         {
           student_id,
           assessment_id,
@@ -617,13 +627,13 @@ export const actions = {
         }
       )
     } catch (err) {
-      console.log(err)
+     commit('setError', err)
     }
   },
 
   async getStudentAssessments({ commit }) {
     const data = await this.$axios.$get(
-      `${process.env.apiURL}/studentassessmentsviews`
+      `${process.env.apiURL}/studentassessmentsviews/`
     )
     commit('setStudentAssessments', data)
   },

@@ -431,10 +431,10 @@ export default {
       return this.$store.state.volunteerid
     },
     studentassessments() {
-      return this.$store.state.student_assessments
+      return this.$store.state.studentAssessments
     },
     studentassessment() {
-      return this.$store.state.student_assessment
+      return this.$store.state.studentAssessment
     },
     studentId() {
       return this.$store.state.studentid
