@@ -618,6 +618,7 @@
       >
     </v-snackbar>
 
+
   </div>
 </template>
 
@@ -733,7 +734,6 @@ export default {
     student_date_of_joining: '',
     menu: false,
     menu1: false,
-    studentError: false,
     student_name: '',
     batch_no: '',
     role_no: '',
