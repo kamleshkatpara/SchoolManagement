@@ -492,7 +492,8 @@ export default {
             assessment_id: this.assessment.id,
             volunteer_id: this.volunteer.id,
             score: this.score,
-            assessment_date: this.assessmentdate
+            assessment_date: this.assessmentdate,
+            created_at: new Date()
           })
           this.addDialog = false
           setTimeout(() => {
@@ -571,7 +572,9 @@ export default {
           assessment_id: this.assessmentId[0].id,
           volunteer_id: this.volunteerId[0].id,
           score: this.studentassessment.score,
-          assessment_date: this.studentassessment_assessment_date
+          assessment_date: this.studentassessment_assessment_date,
+          created_at: this.studentassessment.created_at,
+          updated_at: new Date()
         })
         this.editDialog = false
       }, 700)

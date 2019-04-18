@@ -659,7 +659,7 @@ export const actions = {
     }
   ) {
     const data = await this.$axios.$put(
-      `${process.env.apiURL}/studentAssessments/${id}`,
+      `${process.env.apiURL}/Student_Assessments/${id}`,
       {
         student_id,
         assessment_id,
@@ -675,7 +675,7 @@ export const actions = {
 
   async removeStudentAssessment({ commit }, { id }) {
     const data = await this.$axios.$delete(
-      `${process.env.apiURL}/studentAssessments/${id}`
+      `${process.env.apiURL}/Student_Assessments/${id}`
     )
   },
 
